@@ -23,7 +23,8 @@ class User (
     var country: String = "",
     var zip: String = "",
     var createdAt: String = "",
-    var updatedAt: String = ""
+    var updatedAt: String = "",
+    var hosts: ArrayList<HostMember> = ArrayList()
 ) {
     fun loadFromJson (json: JSONObject): User {
         _id = json.getString("_id")
@@ -43,13 +44,14 @@ class User (
         zip = json.getString("zip")
         createdAt = json.getString("createdAt")
         updatedAt = json.getString("updatedAt")
+        hosts = loadHostMembershipFrom(json.getJSONArray("hosts"))
         return this
     }
 
     fun loadHostMembershipFrom (jsonArray: JSONArray): ArrayList<HostMember> {
         val hosts = ArrayList<HostMember>()
         for (i in 0 until jsonArray.length()) {
-            val j = JSONObject(jsonArray[i].toString())
+            val j = jsonArray.getJSONObject(i)
             Log.d("Iteration", jsonArray[i].toString())
             val _id = j.getString("_id")
             val isOwner = j.getBoolean("isOwner")
@@ -92,7 +94,8 @@ class User (
         json.put("zipt", this.zip)
         json.put("createdAt", this.createdAt)
         json.put("updatedAt", this.updatedAt)
-
+        val hostsJsonArray: JSONArray = convertToJsonArray(this.hosts)
+        json.put("hosts", hostsJsonArray.toString())
         return json
     }
 

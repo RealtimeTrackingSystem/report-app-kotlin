@@ -20,7 +20,8 @@ import com.johnhigginsmavila.rcrtskotlinapp.Services.UserService
 import kotlinx.android.synthetic.main.activity_menu.*
 import kotlinx.android.synthetic.main.app_bar_menu.*
 
-class MenuActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MenuActivity : AppCompatActivity(),
+    NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,12 +106,5 @@ class MenuActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ft.commit()
         }
         drawer_layout.closeDrawer(GravityCompat.START)
-    }
-
-    fun onLogoutBtnClicked (view: View) {
-        UserService.logout()
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }

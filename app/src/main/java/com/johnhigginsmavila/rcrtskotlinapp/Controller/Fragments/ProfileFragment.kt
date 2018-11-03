@@ -63,7 +63,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
     override fun onClick (view: View) {
         println(view.id)
         println(R.id.profileFragmentLogoutBtn)
-        if (view.getId() == R.id.profileFragmentLogoutBtn) {
+        if (view.id == R.id.profileFragmentLogoutBtn) {
             UserService.logout()
             val intent = Intent(context, MainActivity::class.java)
             startActivity(intent)

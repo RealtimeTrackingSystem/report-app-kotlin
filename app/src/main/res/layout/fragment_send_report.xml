@@ -1,14 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".Controller.Fragments.SendReportFragment">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".Controller.Fragments.SendReportFragment"
+                                             android:id="@+id/frameLayout2">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="SEND REPORT"/>
 
-</FrameLayout>
+    <TextView
+            android:text="New Report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/titleTxt" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:textAlignment="center" android:textSize="18sp"/>
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                  android:orientation="vertical" android:layout_marginTop="8dp"
+                  app:layout_constraintTop_toBottomOf="@+id/titleTxt" android:layout_marginBottom="8dp"
+                  app:layout_constraintBottom_toTopOf="@+id/sendReportBtn"
+                  app:layout_constraintVertical_bias="0.19999999" app:layout_constraintEnd_toEndOf="parent"
+                  android:layout_marginEnd="4dp" app:layout_constraintStart_toStartOf="parent"
+                  android:layout_marginStart="4dp">
+        <EditText
+                android:layout_width="381dp"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                tools:layout_editor_absoluteY="68dp" tools:layout_editor_absoluteX="56dp"
+                android:id="@+id/titleInputTxt" android:hint="Title" android:textColorHint="@color/colorAccent"
+        />
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/descriptionInputTxt" android:textColorHint="@color/colorAccent"
+                android:hint="Description"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/locationInputTxt" android:textColorHint="@color/colorAccent"
+                android:hint="Location"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/tagsInputTxt" android:textColorHint="@color/colorAccent"
+                android:hint="Tags separeted by spaces"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="75dp">
+            <TextView
+                    android:text="Coordinates: (x, y)"
+                    android:layout_width="283dp"
+                    android:layout_height="match_parent" android:id="@+id/coordinatesTxt" android:layout_weight="1"
+                    android:textSize="18sp"/>
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_dialog_map"
+                    android:id="@+id/mapPinBtn" android:layout_weight="1"
+                    android:foregroundTint="@color/colorPrimary" tools:foregroundTint="@color/colorPrimary"
+                    android:tint="@color/colorPrimary"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="85dp" tools:layout_editor_absoluteY="196dp"
+                tools:layout_editor_absoluteX="16dp">
+            <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                    android:id="@+id/img1Btn" android:layout_weight="1" android:scaleType="centerInside"
+            />
+            <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                    android:id="@+id/img2Btn" android:layout_weight="1" android:scaleType="centerInside"
+            />
+            <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                    android:id="@+id/img3Btn" android:layout_weight="1" android:scaleType="centerInside"
+            />
+            <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                    android:id="@+id/img4Btn" android:layout_weight="1" android:scaleType="centerInside"
+            />
+        </LinearLayout>
+    </LinearLayout>
+    <Button
+            android:text="Report"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/sendReportBtn" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+</android.support.constraint.ConstraintLayout>

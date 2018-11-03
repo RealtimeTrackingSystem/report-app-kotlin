@@ -280,6 +280,9 @@ class SendReportFragment : Fragment(), View.OnClickListener {
                     .subscribe{
                         if (it) {
                             clearForm()
+                            Toast.makeText(context, "Report was successfully sent", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "An error occur while sending report", Toast.LENGTH_SHORT).show()
                         }
                     }
                     .run{

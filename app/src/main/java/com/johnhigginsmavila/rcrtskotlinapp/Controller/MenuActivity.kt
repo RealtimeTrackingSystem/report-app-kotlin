@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.HostFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.ProfileFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.SendReportFragment
@@ -93,11 +94,21 @@ class MenuActivity : AppCompatActivity(),
         var fragment: Fragment
 
         when (id) {
-            R.id.menuSendReport -> fragment = SendReportFragment()
-            R.id.menuViewReports -> fragment = ViewReportsFragment()
-            R.id.menuHost -> fragment = HostFragment()
-            R.id.menuProfile -> fragment = ProfileFragment()
-            else -> fragment = SendReportFragment()
+            R.id.menuSendReport ->  {
+                fragment = SendReportFragment()
+            }
+            R.id.menuViewReports -> {
+                fragment = ViewReportsFragment()
+            }
+            R.id.menuHost -> {
+                fragment = HostFragment()
+            }
+            R.id.menuProfile ->  {
+                fragment = ProfileFragment()
+            }
+            else -> {
+                fragment = ViewReportsFragment()
+            }
         }
 
         if (fragment != null) {

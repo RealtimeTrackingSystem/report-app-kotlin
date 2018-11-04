@@ -27,8 +27,12 @@ object AuthService {
                     }
                     val payload = response.getJSONObject("payload")
                     val userJson = payload.getJSONObject("user")
+
+                    App.prefs.reporterId = userJson.getString("reporterID")
                     App.prefs.userData = userJson.toString()
                     App.prefs.authToken = payload.getString("token")
+                    Log.d("AUTH", App.prefs.reporterId)
+                    Log.d("AUTH", userJson.getString("reporterID"))
                     App.prefs.isLoggedIn = true
                     it.onNext(true)
                 } catch (e: JSONException) {
@@ -70,6 +74,7 @@ object AuthService {
                     App.prefs.userData = userJson.toString()
                     App.prefs.authToken = payload.getString("token")
                     App.prefs.isLoggedIn = true
+                    App.prefs.reporterId = userJson.getString("reporterID")
                     it.onNext(true)
                 } catch (e: JSONException) {
                     Log.d("JSON", "EXC:" + e.localizedMessage)

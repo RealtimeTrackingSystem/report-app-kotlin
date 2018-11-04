@@ -1,7 +1,9 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Model
 
+import org.json.JSONObject
+
 class MediaUpload (
-    var metaData: String = "",
+    var metaData: JSONObject,
     var platform: String = "cloudinary"
 ) {
 

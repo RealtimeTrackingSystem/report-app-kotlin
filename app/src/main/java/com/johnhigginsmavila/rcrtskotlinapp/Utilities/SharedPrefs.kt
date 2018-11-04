@@ -14,6 +14,7 @@ class SharedPrefs(context: Context) {
     val IS_LOGGED_IN = "isLoggedIn"
     val AUTH_TOKEN = "authToken"
     val USER_DATA = "userData"
+    val REPORTER_ID = "reporterId"
 
     var isLoggedIn: Boolean
         get() = prefs.getBoolean(IS_LOGGED_IN, false)
@@ -27,5 +28,11 @@ class SharedPrefs(context: Context) {
         get() = prefs.getString(USER_DATA, "")
         set(value) = prefs.edit().putString(USER_DATA, value).apply()
 
+    var reporterId: String
+        get() = prefs.getString(REPORTER_ID, "")
+        set(value) = prefs.edit().putString(REPORTER_ID, value).apply()
+
     val requestQueue: RequestQueue = Volley.newRequestQueue(context)
+
+    val context = context
 }

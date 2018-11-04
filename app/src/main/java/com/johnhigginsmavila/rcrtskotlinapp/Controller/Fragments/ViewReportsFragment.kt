@@ -2,11 +2,16 @@ package com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.johnhigginsmavila.rcrtskotlinapp.Adapters.ReportListAdapter
 
 import com.johnhigginsmavila.rcrtskotlinapp.R
+import com.johnhigginsmavila.rcrtskotlinapp.Services.ReportService
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_view_reports.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +32,8 @@ class ViewReportsFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    lateinit var adapter: ReportListAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -40,7 +47,34 @@ class ViewReportsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_reports, container, false)
+        val v = inflater.inflate(R.layout.fragment_view_reports, container, false)
+        getReports{
+            if (it && context != null) {
+                adapter = ReportListAdapter(context!!, ReportService.reports) { report ->
+
+                }
+
+                reportListView.adapter = adapter
+
+                val layoutManager = LinearLayoutManager(context)
+                reportListView.layoutManager = layoutManager
+                reportListView.setHasFixedSize(true)
+
+            }
+
+        }
+        return v
+    }
+
+    fun getReports (cb: (Boolean) -> Unit) {
+        ReportService.getMyReports()
+            .subscribeOn(Schedulers.io())
+            .subscribe{
+                cb(it)
+            }
+            .run {
+
+            }
     }
 
 }

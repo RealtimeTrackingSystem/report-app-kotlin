@@ -10,6 +10,8 @@ const val LOGIN_URL = "${BASE_URL}/api/auth/signin"
 
 const val SIGNUP_URL = "${BASE_URL}/api/auth/signup"
 
+const val REFRESH_USER_URL = "$BASE_URL/api/auth/rehydrate"
+
 const val HOST_URL = "${BASE_URL}/api/hosts"
 
 const val REPORT_URL = "${BASE_URL}/api/reports"

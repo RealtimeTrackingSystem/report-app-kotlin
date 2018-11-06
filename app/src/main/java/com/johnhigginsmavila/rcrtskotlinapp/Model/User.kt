@@ -26,45 +26,6 @@ class User (
     var updatedAt: String = "",
     var hosts: ArrayList<HostMember> = ArrayList()
 ) {
-    fun loadFromJson (json: JSONObject): User {
-        _id = json.getString("_id")
-        reporterID = json.getString("reporterID")
-        accessLevel = json.getString("accessLevel")
-        username = json.getString("username")
-        email = json.getString("email")
-        fname = json.getString("fname")
-        lname = json.getString("lname")
-        gender = json.getString("gender")
-        alias = json.getString("alias")
-        street = json.getString("street")
-        barangay = json.getString("_id")
-        city = json.getString("city")
-        region = json.getString("region")
-        country = json.getString("country")
-        zip = json.getString("zip")
-        createdAt = json.getString("createdAt")
-        updatedAt = json.getString("updatedAt")
-        hosts = loadHostMembershipFrom(json.getJSONArray("hosts"))
-        return this
-    }
-
-    fun loadHostMembershipFrom (jsonArray: JSONArray): ArrayList<HostMember> {
-        val hosts = ArrayList<HostMember>()
-        for (i in 0 until jsonArray.length()) {
-            val j = jsonArray.getJSONObject(i)
-            Log.d("Iteration", jsonArray[i].toString())
-            val _id = j.getString("_id")
-            val isOwner = j.getBoolean("isOwner")
-            val isAdmin = j.getBoolean("isAdmin")
-            val isBlocked = j.getBoolean("isAdmin")
-            val createdAt = j.getString("createdAt")
-            val updatedAt = j.getString("updatedAt")
-            val newHost = HostMember(_id, isOwner, isAdmin, isBlocked, createdAt, updatedAt)
-            Log.d("Verifh", newHost.stringify())
-            hosts.add(newHost)
-        }
-        return hosts
-    }
 
     fun convertToJsonArray (hosts: ArrayList<HostMember>): JSONArray {
         var array: JSONArray = JSONArray()

@@ -9,6 +9,7 @@ object UserService {
         App.prefs.authToken = ""
         App.prefs.isLoggedIn = false
         App.prefs.userData = ""
+        App.prefs.userHost = ""
     }
 
     fun updateUserData (user: User) {

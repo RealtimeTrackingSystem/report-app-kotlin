@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".Controller.Fragments.HostFragment">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".Controller.Fragments.HostFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Host"/>
 
-</FrameLayout>
+    <TextView
+            android:text="Your account doesn't have a host."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/nhTitleTxt" android:layout_marginTop="150dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:textSize="18sp" android:visibility="gone"/>
+    <Button
+            android:text="Send Request to Host"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/nhRequestBtn" android:layout_marginTop="50dp"
+            app:layout_constraintTop_toBottomOf="@+id/nhTitleTxt" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:background="@drawable/primary_btn" android:textColor="@android:color/white"
+            android:visibility="gone"/>
+    <ImageView
+            android:src="@android:drawable/sym_def_app_icon"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:id="@+id/whHostImg"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintDimensionRatio="1:1" android:scaleType="centerCrop"
+            android:layout_marginTop="32dp" app:layout_constraintTop_toBottomOf="@+id/whStatusTxt"
+            android:visibility="gone"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/whHostNameTxt" android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/whHostImg" tools:text="Host Name" android:textSize="18sp"
+            android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent" android:visibility="gone"/>
+    <TextView
+            android:layout_width="329dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/whHostDescTxt" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/whHostNameTxt" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="32dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp"
+            tools:text="Cras gravida vel ex at consectetur. Aliquam vel volutpat ante. Integer id tempor eros, at lobortis augue. Etiam ipsum mi, placerat eget urna at, placerat sodales lorem. Donec accumsan tempus justo at hendrerit. Donec varius venenatis molestie. Sed volutpat nunc lorem. "
+            android:textAlignment="center" android:visibility="gone"/>
+    <Button
+            android:text="See Location In Map"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/whMapBtn" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/whHostDescTxt"
+            android:background="@drawable/primary_btn" android:textColor="@android:color/white"
+            app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="0.503"
+            android:visibility="gone"/>
+    <TextView
+            android:text="Status:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/whStatusLbl" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent" android:visibility="gone"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/whStatusTxt" tools:text="Member" app:layout_constraintStart_toEndOf="@+id/whStatusLbl"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@+id/whStatusLbl" android:visibility="gone"/>
+</android.support.constraint.ConstraintLayout>

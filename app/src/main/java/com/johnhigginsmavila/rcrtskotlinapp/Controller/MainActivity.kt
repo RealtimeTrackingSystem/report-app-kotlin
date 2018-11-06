@@ -10,12 +10,18 @@ import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import com.johnhigginsmavila.rcrtskotlinapp.Model.HostMember
 import com.johnhigginsmavila.rcrtskotlinapp.R
 import com.johnhigginsmavila.rcrtskotlinapp.Services.AuthService
+import com.johnhigginsmavila.rcrtskotlinapp.Services.HostService
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.SharedPrefs
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_signup.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +53,26 @@ class MainActivity : AppCompatActivity() {
         if (loginName != "" && password != "") {
             AuthService.loginUser(loginName, password)
                 .subscribeOn(Schedulers.io())
+                .flatMap { result ->
+                    when(result) {
+                        false -> Observable.just(false)
+                        true -> {
+                            try {
+                                val userData = JSONObject(App.prefs.userData)
+                                val hostArray = userData.getJSONArray("hosts")
+                                if (hostArray.length() > 0) {
+                                    val host = hostArray.getJSONObject(0)
+                                    val _id = host.getString("_id")
+                                    HostService.loadUserhost(_id)
+                                } else {
+                                    Observable.just(true)
+                                }
+                            } catch (e: JSONException) {
+                                Observable.just(false)
+                            }
+                        }
+                    }
+                }
                 .subscribe({ result ->
                     Log.d("API", result.toString())
                     when (result) {

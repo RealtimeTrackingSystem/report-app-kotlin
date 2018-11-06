@@ -8,20 +8,35 @@ import com.johnhigginsmavila.rcrtskotlinapp.Model.Host
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.HOST_URL
 import io.reactivex.Observable
 import org.json.JSONException
+import java.lang.Exception
 
 object HostService {
 
-    fun getHostById (_id: String): Observable<Host> {
+    fun loadUserhost (_id: String): Observable<Boolean> {
+        Log.d("HOST_ID", "this is the ID: $_id")
+        if (_id == "") {
+            return Observable.just(false)
+        }
         return Observable.create{
-            var login = object: JsonObjectRequest(Method.GET, HOST_URL, null, Response.Listener { response ->
+            var loadHost = object: JsonObjectRequest(Method.GET, "$HOST_URL/$_id", null, Response.Listener { response ->
                 try {
-                    val json = response.getJSONObject("host")
-                    var host = Host().loadFromJson(json)
-                    it.onNext(host)
+                    if (response.getInt("httpCode") == 200) {
+                        Log.d("HOST_URL", "$HOST_URL/$_id")
+                        Log.d("HOST_URL", response.toString())
+                        val hostJson = response.getJSONObject("host")
+                        App.prefs.userHost = hostJson.toString()
+                        it.onNext(true)
+                    } else {
+                        it.onNext(false)
+                    }
                 }
                 catch (e: JSONException) {
                     Log.d("HOST_URL", e.toString())
-                    it.onError(e)
+                    it.onNext(false)
+                }
+                catch (e: Exception) {
+                    Log.d("ERROR", e.localizedMessage)
+                    it.onNext(false)
                 }
             }, Response.ErrorListener { response ->
                 Log.d(  "HOST_URL", response.toString())
@@ -37,6 +52,7 @@ object HostService {
                     return headers
                 }
             }
+            App.prefs.requestQueue.add(loadHost)
         }
     }
 }

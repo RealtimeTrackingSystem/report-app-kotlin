@@ -1,53 +1,81 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Model
 
+import android.util.Log
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
-class Host (
-    var _id: String = "",
-    var name: String = "",
-    var location: String = "",
-    var description: String = "",
-    var hostNature: String = "",
-    var defaultTags: MutableList<String> = mutableListOf(),
-    var long: String = "",
-    var lat: String = "",
-    var type: String = "",
-    var street: String = "",
-    var barangay: String = "",
-    var city: String = "",
-    var region: String = "",
-    var country: String = "",
-    var zip: String = "",
-    var createdAt: String = "",
-    var updatedAt: String = ""
-) {
-    fun loadFromJson (json: JSONObject) : Host {
-        _id = json.getString("_id")
-        name = json.getString("name")
-        location = json.getString("location")
-        description = json.getString("location")
-        hostNature = json.getString("location")
-        defaultTags = getDefaultTags(json.getJSONArray("defaultTags"))
-        long = json.getString("location")
-        lat = json.getString("location")
-        type = json.getString("location")
-        street = json.getString("location")
-        barangay = json.getString("location")
-        city = json.getString("location")
-        region = json.getString("location")
-        country = json.getString("location")
-        zip = json.getString("location")
-        createdAt = json.getString("location")
-        updatedAt = json.getString("location")
-        return this
+class Host {
+
+    var _id: String? = null
+    var name: String? = null
+    var location: String? = null
+    var description: String? = null
+    var hostNature: String? = null
+    var defaultTags: ArrayList<String>? = null
+    var long: Double? = null
+    var lat: Double? = null
+    var type: String? = null
+    var street: String? = null
+    var barangay: String? = null
+    var city: String? = null
+    var region: String? = null
+    var country: String? = null
+    var zip: String? = null
+    var createdAt: String? = null
+    var updatedAt: String? = null
+
+    constructor()
+    constructor(h: JSONObject) {
+        try {
+            _id = h.getString("_id")
+            name = h.getString("name")
+            location = h.getString("location")
+            hostNature = h.getString("hostNature")
+
+
+            var tags = h.getJSONArray("defaultTags")
+            for (i in 0..(tags.length() -1)) {
+                defaultTags?.add(tags.getString(i))
+            }
+            long = h.getDouble("long")
+            lat = h.getDouble("lat")
+            type = h.getString("type")
+            street = h.getString("street")
+            barangay = h.getString("barangay")
+            city = h.getString("city")
+            region = h.getString("region")
+            country = h.getString("country")
+            zip = h.getString("zip")
+            createdAt = h.getString("createdAt")
+            updatedAt = h.getString("updatedAt")
+        }
+        catch (e: JSONException) {
+            Log.d("HOST_CLASS_ERROR", e.localizedMessage)
+        }
     }
 
-    fun getDefaultTags (tags: JSONArray) : MutableList<String> {
-        var list: MutableList<String> = mutableListOf()
-        for (i in 0..(tags.length() -1)) list.add(i, tags[i].toString())
-        return list
+    fun toJson (): JSONObject {
+        val json = JSONObject()
+        json.put("_id", this._id)
+        json.put("name", this.name)
+        json.put("location", this.location)
+        json.put("hostNature", this.hostNature)
+        json.put("defaultTags", defaultTags)
+        json.put("long", long)
+        json.put("lat", lat)
+        json.put("type", type)
+        json.put("street", street)
+        json.put("barangay", barangay)
+        json.put("city", city)
+        json.put("region", region)
+        json.put("country", country)
+        json.put("zip", zip)
+        json.put("createdAt", createdAt)
+        json.put("updatedAt", updatedAt)
+        return json
     }
+
 }
 
 /**

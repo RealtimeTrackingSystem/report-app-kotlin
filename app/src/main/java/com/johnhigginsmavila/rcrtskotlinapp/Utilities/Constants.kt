@@ -14,6 +14,8 @@ const val REFRESH_USER_URL = "$BASE_URL/api/auth/rehydrate"
 
 const val HOST_URL = "${BASE_URL}/api/hosts"
 
+const val HOST_REQUEST_URL = "${HOST_URL}/requests"
+
 const val REPORT_URL = "${BASE_URL}/api/reports"
 
 // EXTRAS

@@ -9,6 +9,7 @@ class Host {
 
     var _id: String? = null
     var name: String? = null
+    var email: String? = null
     var location: String? = null
     var description: String? = null
     var hostNature: String? = null
@@ -32,7 +33,8 @@ class Host {
             name = h.getString("name")
             location = h.getString("location")
             hostNature = h.getString("hostNature")
-
+            email = h.getString("email")
+            description = h.getString("description")
 
             var tags = h.getJSONArray("defaultTags")
             for (i in 0..(tags.length() -1)) {
@@ -59,6 +61,7 @@ class Host {
         val json = JSONObject()
         json.put("_id", this._id)
         json.put("name", this.name)
+        json.put("email", this.email)
         json.put("location", this.location)
         json.put("hostNature", this.hostNature)
         json.put("defaultTags", defaultTags)

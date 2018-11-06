@@ -1,13 +1,17 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments
 
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.App
+import com.johnhigginsmavila.rcrtskotlinapp.Controller.HostListActivity
 import com.johnhigginsmavila.rcrtskotlinapp.Model.Host
 import com.johnhigginsmavila.rcrtskotlinapp.Model.HostMember
 
@@ -18,6 +22,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_host.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -66,6 +71,12 @@ class HostFragment : Fragment() {
         loadView(v)
         loadUserData()
 
+        nhRBtn?.setOnClickListener { view: View ->
+            val hostListIntent = Intent(App.prefs.context, HostListActivity::class.java)
+
+            startActivity(hostListIntent)
+        }
+
         return v
     }
 
@@ -78,11 +89,13 @@ class HostFragment : Fragment() {
         nhTiTxt = v.findViewById(R.id.nhTitleTxt)
 
         whHDTxt = v.findViewById(R.id.whHostDescTxt)
-        whHImg = v.findViewById(R.id.whHostImg)
+        whHImg = v.findViewById<ImageView>(R.id.whHostImg)
         whHNTxt = v.findViewById(R.id.whHostNameTxt)
         whSLbl = v.findViewById(R.id.whStatusLbl)
         whSTxt = v.findViewById(R.id.whStatusTxt)
         whMBtn = v.findViewById(R.id.whMapBtn)
+
+        setImage(v)
     }
 
     private fun populateHostData () {
@@ -152,6 +165,35 @@ class HostFragment : Fragment() {
         whSTxt?.visibility = View.VISIBLE
         whMBtn?.visibility = View.VISIBLE
 
+    }
+
+    fun setImage (v:View) {
+        try {
+            var userAvatar = "profileDefault"
+            var avatarColor = "[0.5, 0.5, 0.5, 1]"
+            val random = Random()
+            val color = random.nextInt(2)
+            val avatar = random.nextInt(28)
+
+            if (color == 0) {
+                userAvatar = "light$avatar"
+            } else {
+                userAvatar = "dark$avatar"
+            }
+
+            val r = random.nextInt(255)
+            val g = random.nextInt(255)
+            val b = random.nextInt(255)
+
+
+            val resourceId = App.prefs.context.resources.getIdentifier(userAvatar, "drawable", App.prefs.context.packageName)
+            val img = v.findViewById<ImageView>(R.id.whHostImg)
+            img?.setImageResource(resourceId)
+            img?.setBackgroundColor(Color.rgb(r,g,b))
+        }
+        catch (e: Exception) {
+            Log.d("SET_IMAGE_ERROR", e.localizedMessage)
+        }
     }
 
 }

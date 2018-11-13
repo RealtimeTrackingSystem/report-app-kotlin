@@ -1,6 +1,7 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.google.android.gms.maps.model.LatLng
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.AddPersonActivity
@@ -79,45 +81,58 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_send_report, container, false)
 
-        loadHosts {hosts ->
-            if (hosts.count() == 0) {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+
+
+        progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
+        showProgress()
+        loadHosts { hosts ->
+            if (hosts?.count() == 0) {
                 Toast.makeText(App.prefs.context, "Cannot load host list at this time", Toast.LENGTH_SHORT).show()
+            } else {
+                val scrollView = v.findViewById<ScrollView>(R.id.scrollView3)
+                scrollView.visibility = View.VISIBLE
+                val btnLogout = v.findViewById<View>(R.id.sendReportBtn)
+                val btnPinMap = v.findViewById<View>(R.id.mapPinBtn)
+                val btnImg1 = v.findViewById<View>(R.id.img1Btn)
+                val btnImg2 = v.findViewById<View>(R.id.img2Btn)
+                val btnImg3 = v.findViewById<View>(R.id.img3Btn)
+                val btnImg4 = v.findViewById<View>(R.id.img4Btn)
+                val spinner = v.findViewById<Spinner>(R.id.hostListSinner)
+
+                val btnAddPeople = v.findViewById<ImageButton>(R.id.peopleAddBtn)
+                txtAddPeople = v.findViewById<TextView>(R.id.peopleTxt)
+                val btnSubPeople = v.findViewById<ImageButton>(R.id.peopleSubBtn)
+
+                loadPeople(txtAddPeople)
+
+
+                btnLogout.setOnClickListener(this)
+                btnPinMap.setOnClickListener(this)
+                btnImg1.setOnClickListener(this)
+                btnImg2.setOnClickListener(this)
+                btnImg3.setOnClickListener(this)
+                btnImg4.setOnClickListener(this)
+                spinner!!.setOnItemSelectedListener(this)
+
+                btnAddPeople.setOnClickListener(this)
+                btnSubPeople.setOnClickListener(this)
+
+
+                if (hosts != null) {
+                    hideProgress()
+                    val aa = ArrayAdapter(context, android.R.layout.simple_spinner_item, hosts)
+                    aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+                    spinner.adapter = aa
+                }
             }
-            val btnLogout = v.findViewById<View>(R.id.sendReportBtn)
-            val btnPinMap = v.findViewById<View>(R.id.mapPinBtn)
-            val btnImg1 = v.findViewById<View>(R.id.img1Btn)
-            val btnImg2 = v.findViewById<View>(R.id.img2Btn)
-            val btnImg3 = v.findViewById<View>(R.id.img3Btn)
-            val btnImg4 = v.findViewById<View>(R.id.img4Btn)
-            val spinner = v.findViewById<Spinner>(R.id.hostListSinner)
-
-            val btnAddPeople = v.findViewById<ImageButton>(R.id.peopleAddBtn)
-            txtAddPeople = v.findViewById<TextView>(R.id.peopleTxt)
-            val btnSubPeople = v.findViewById<ImageButton>(R.id.peopleSubBtn)
-
-            loadPeople(txtAddPeople)
-
-
-            btnLogout.setOnClickListener(this)
-            btnPinMap.setOnClickListener(this)
-            btnImg1.setOnClickListener(this)
-            btnImg2.setOnClickListener(this)
-            btnImg3.setOnClickListener(this)
-            btnImg4.setOnClickListener(this)
-            spinner!!.setOnItemSelectedListener(this)
-
-            btnAddPeople.setOnClickListener(this)
-            btnSubPeople.setOnClickListener(this)
-
-            progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
-
-            val aa = ArrayAdapter(context, android.R.layout.simple_spinner_item, hosts)
-            aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-            spinner.adapter = aa
         }
 
 
@@ -375,7 +390,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         coordinatesTxt.setText("Coordinates: (x, y)")
     }
 
-    fun loadHosts (cb: (ArrayList<String>) -> Unit) {
+    fun loadHosts (cb: (hosts: ArrayList<String>?) -> Unit) {
         HostService.getHosts()
             .subscribeOn(Schedulers.io())
             .subscribe{hostArray ->
@@ -390,11 +405,11 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                     cb(hosts)
                 }
                 catch (e: JSONException) {
-                    cb(hosts)
+                    cb(null)
                     Log.d("LOAD_HOST_ERROR", e.localizedMessage)
                 }
                 catch (e: Exception) {
-                    cb(hosts)
+                    cb(null)
                     Log.d("LOAD_HOST_ERROR", e.localizedMessage)
                 }
             }
@@ -459,4 +474,5 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         progressBar.visibility = View.INVISIBLE
         sending = false
     }
+
 }

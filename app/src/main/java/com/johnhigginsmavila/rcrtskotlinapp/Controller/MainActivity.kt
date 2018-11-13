@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.johnhigginsmavila.rcrtskotlinapp.Model.HostMember
 import com.johnhigginsmavila.rcrtskotlinapp.R
@@ -25,11 +26,15 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var progressBar: ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val prefs = SharedPrefs(this)
+
+        progressBar = loginProgresBar
 
         val token: String = prefs.authToken
         println(token)
@@ -51,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         val loginName = loginNameInput.text.toString()
         val password = passwordInput.text.toString()
         if (loginName != "" && password != "") {
+            showProgressBar()
             AuthService.loginUser(loginName, password)
                 .subscribeOn(Schedulers.io())
                 .flatMap { result ->
@@ -75,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 .subscribe({ result ->
                     Log.d("API", result.toString())
+                    hideProgressBar()
                     when (result) {
                         true -> {
                             // enableSpinner(false)
@@ -85,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
-                        else -> showToast("Error")
+                        else -> showToast(AuthService.authResponseError!!)
                     }
                 }, { error ->
                     Log.d("API-ERROR", error.localizedMessage)
@@ -107,4 +114,14 @@ class MainActivity : AppCompatActivity() {
             inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
         }
     }
+
+    fun showProgressBar () {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar () {
+        progressBar.visibility = View.INVISIBLE
+    }
+
+
 }

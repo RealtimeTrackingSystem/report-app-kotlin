@@ -18,6 +18,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 object AuthService {
+    var authResponseError: String? = null
     fun loadUserData (it: ObservableEmitter<Boolean>, response: JSONObject) {
         try {
             Log.d("Response", response.toString())
@@ -95,8 +96,18 @@ object AuthService {
             val loginRequest = object: JsonObjectRequest(Method.POST, LOGIN_URL, null, Response.Listener { response ->
                 loadUserData(it, response)
             }, Response.ErrorListener { error ->
-                Log.d("ERROR", "Could not log in user: $error")
-                it.onNext(false)
+                try {
+                    if (error.networkResponse.statusCode == 401) {
+                        authResponseError = "Incorrect Credentials"
+                    } else {
+                        authResponseError = "Internal Server Error"
+                    }
+
+                    Log.d("ERROR", "Could not log in user: $error")
+                    it.onNext(false)
+                } catch (e: Exception) {
+                    Log.d("ERROR", "Could not log in user: ${e.localizedMessage}")
+                }
             }) {
                 override fun getBodyContentType(): String {
                     return "application/json; charset=utf-8"

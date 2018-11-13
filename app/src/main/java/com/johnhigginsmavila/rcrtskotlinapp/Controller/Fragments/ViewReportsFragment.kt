@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import com.johnhigginsmavila.rcrtskotlinapp.Adapters.ReportListAdapter
 
 import com.johnhigginsmavila.rcrtskotlinapp.R
@@ -49,6 +50,9 @@ class ViewReportsFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_view_reports, container, false)
         getReports{
+            val progressBar = v.findViewById<ProgressBar>(R.id.viewReportsProgressBar)
+
+            progressBar.visibility = View.INVISIBLE
             adapter = ReportListAdapter(context!!, ReportService.reports) { report ->
 
             }

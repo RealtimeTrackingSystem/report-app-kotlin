@@ -108,37 +108,9 @@ object ReportService {
             val reportsArray = response.getJSONArray("reports")
             for (index in 0 until (reportsArray.length() - 1)) {
 
-                val mediaUploads: ArrayList<MediaUpload> = ArrayList<MediaUpload>()
-                val people: ArrayList<Person> = ArrayList<Person>()
-                val properties: ArrayList<Property> = ArrayList<Property>()
-
                 val reportData: JSONObject = reportsArray.getJSONObject(index)
-                val _id = reportData.getString("_id")
-                val title = reportData.getString("title")
-                val description = reportData.getString("description")
-                val location = reportData.getString("location")
-                val long = reportData.getDouble("long")
-                val lat = reportData.getDouble("lat")
-                val _reporter = reportData.getString("_reporter")
-                val _host = reportData.getString("_host")
-                val status = reportData.getString("status")
-                val medias = reportData.getJSONArray("medias")
-                val peopleArray = reportData.getJSONArray("people")
-                val propertiesArray = reportData.getJSONArray("properties")
-                val tagsArray = reportData.getJSONArray("tags")
-                var tags = ""
 
-                for (i in 0..(tagsArray.length() -1)) {
-                    tags += tagsArray.getString(i)
-                }
-
-                for (c in 0..(medias.length() -1)) {
-                    val m = medias.getJSONObject(c)
-                    val media = MediaUpload(m.getJSONObject("metaData"))
-
-                    mediaUploads.add(media)
-                }
-                val report = Report(_id, title, description, location, long, lat, tags, _reporter, _host, status, people, properties, mediaUploads)
+                val report = Report(reportData)
                 Log.d("REPORT: ", report._id)
                 println("Length is: ${reportsArray.length()}")
                 reports.add(report)

@@ -24,17 +24,25 @@ object ReportService {
 
     var reports: ArrayList<Report> = ArrayList<Report>()
 
+    var requestError: String? = null
+
     fun sendReport (report: NewReport): Observable<Boolean> {
         val auth = App.prefs.authToken
         val headers = HashMap<String, String>()
         headers.put("Authorization", auth)
         return Observable.create {
             val reportRequest: MultipartRequest = MultipartRequest(REPORT_URL, headers, { response ->
+                Log.d("REPONSE", response.toString())
                 it.onNext(true)
             }, {errorResponse ->
+                Log.d("ERROR", errorResponse.toString())
                 try {
-                    Log.d("POST_REPORT", "An Error occured")
+                    val err = String(errorResponse.networkResponse.data)
+                    var errorBody = JSONObject(err)
+                    requestError = errorBody.getString("message")
+                    Log.d("POST_REPORT", err)
                 } catch (e: Exception) {
+                    requestError = "An Error Occured While sending report"
                     Log.d("POST_REPORT", "An Error occured")
                 }
 
@@ -49,6 +57,9 @@ object ReportService {
             reportRequest.addPart(MultipartRequest.FormPart("long", report.long.toString()))
             reportRequest.addPart(MultipartRequest.FormPart("lat", report.lat.toString()))
             reportRequest.addPart(MultipartRequest.FormPart("tags", tags))
+            reportRequest.addPart(MultipartRequest.FormPart("hostId", report.hostId))
+            reportRequest.addPart(MultipartRequest.FormPart("category", report.category))
+            reportRequest.addPart(MultipartRequest.FormPart("people", report.people.toString()))
 
             for (item in report.medias) {
                 var byte = ByteArrayOutputStream()
@@ -95,7 +106,7 @@ object ReportService {
             reports.clear()
             Log.d("REPORTS", response.toString())
             val reportsArray = response.getJSONArray("reports")
-            for (index in 0..(reportsArray.length() -1)) {
+            for (index in 0 until (reportsArray.length() - 1)) {
 
                 val mediaUploads: ArrayList<MediaUpload> = ArrayList<MediaUpload>()
                 val people: ArrayList<Person> = ArrayList<Person>()
@@ -128,11 +139,17 @@ object ReportService {
                     mediaUploads.add(media)
                 }
                 val report = Report(_id, title, description, location, long, lat, tags, _reporter, _host, status, people, properties, mediaUploads)
+                Log.d("REPORT: ", report._id)
+                println("Length is: ${reportsArray.length()}")
                 reports.add(report)
             }
             it.onNext(true)
         } catch (e: JSONException) {
-
+            Log.d("ERROR", e.localizedMessage)
+            it.onNext(false)
+        }
+        catch (e: Exception) {
+            Log.d("ERROR", e.localizedMessage)
             it.onNext(false)
         }
     }

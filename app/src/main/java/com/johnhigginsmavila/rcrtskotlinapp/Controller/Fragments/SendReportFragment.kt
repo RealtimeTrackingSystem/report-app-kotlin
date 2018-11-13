@@ -10,20 +10,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.*
 import com.google.android.gms.maps.model.LatLng
+import com.johnhigginsmavila.rcrtskotlinapp.Controller.AddPersonActivity
+import com.johnhigginsmavila.rcrtskotlinapp.Controller.App
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.MapsActivity
+import com.johnhigginsmavila.rcrtskotlinapp.Model.Host
 import com.johnhigginsmavila.rcrtskotlinapp.Model.MediaUpload
 import com.johnhigginsmavila.rcrtskotlinapp.Model.NewReport
 import com.johnhigginsmavila.rcrtskotlinapp.Model.Report
 
 import com.johnhigginsmavila.rcrtskotlinapp.R
+import com.johnhigginsmavila.rcrtskotlinapp.Services.HostService
 import com.johnhigginsmavila.rcrtskotlinapp.Services.ReportForm
 import com.johnhigginsmavila.rcrtskotlinapp.Services.ReportService
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.EXTRA_MAP_CALLED_FROM
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.NEW_REPORT
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_send_report.*
+import org.json.JSONException
 import java.io.IOException
 import java.lang.Exception
 
@@ -41,7 +46,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SendReportFragment : Fragment(), View.OnClickListener {
+class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -53,6 +58,10 @@ class SendReportFragment : Fragment(), View.OnClickListener {
     private val GALLERY = 1
     private val CAMERA = 2
     private var btnClicked = 0
+
+    lateinit var txtAddPeople: TextView
+    lateinit var progressBar: ProgressBar
+    var sending = false
 
     var pos: LatLng? = null
 
@@ -73,18 +82,43 @@ class SendReportFragment : Fragment(), View.OnClickListener {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_send_report, container, false)
 
-        val btnLogout = v.findViewById<View>(R.id.sendReportBtn)
-        val btnPinMap = v.findViewById<View>(R.id.mapPinBtn)
-        val btnImg1 = v.findViewById<View>(R.id.img1Btn)
-        val btnImg2 = v.findViewById<View>(R.id.img2Btn)
-        val btnImg3 = v.findViewById<View>(R.id.img3Btn)
-        val btnImg4 = v.findViewById<View>(R.id.img4Btn)
-        btnLogout.setOnClickListener(this)
-        btnPinMap.setOnClickListener(this)
-        btnImg1.setOnClickListener(this)
-        btnImg2.setOnClickListener(this)
-        btnImg3.setOnClickListener(this)
-        btnImg4.setOnClickListener(this)
+        loadHosts {hosts ->
+            if (hosts.count() == 0) {
+                Toast.makeText(App.prefs.context, "Cannot load host list at this time", Toast.LENGTH_SHORT).show()
+            }
+            val btnLogout = v.findViewById<View>(R.id.sendReportBtn)
+            val btnPinMap = v.findViewById<View>(R.id.mapPinBtn)
+            val btnImg1 = v.findViewById<View>(R.id.img1Btn)
+            val btnImg2 = v.findViewById<View>(R.id.img2Btn)
+            val btnImg3 = v.findViewById<View>(R.id.img3Btn)
+            val btnImg4 = v.findViewById<View>(R.id.img4Btn)
+            val spinner = v.findViewById<Spinner>(R.id.hostListSinner)
+
+            val btnAddPeople = v.findViewById<ImageButton>(R.id.peopleAddBtn)
+            txtAddPeople = v.findViewById<TextView>(R.id.peopleTxt)
+            val btnSubPeople = v.findViewById<ImageButton>(R.id.peopleSubBtn)
+
+            loadPeople(txtAddPeople)
+
+
+            btnLogout.setOnClickListener(this)
+            btnPinMap.setOnClickListener(this)
+            btnImg1.setOnClickListener(this)
+            btnImg2.setOnClickListener(this)
+            btnImg3.setOnClickListener(this)
+            btnImg4.setOnClickListener(this)
+            spinner!!.setOnItemSelectedListener(this)
+
+            btnAddPeople.setOnClickListener(this)
+            btnSubPeople.setOnClickListener(this)
+
+            progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
+
+            val aa = ArrayAdapter(context, android.R.layout.simple_spinner_item, hosts)
+            aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+            spinner.adapter = aa
+        }
 
 
         // Inflate the layout for this fragment
@@ -104,22 +138,50 @@ class SendReportFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
-        if (view?.id == sendReportBtn.id) {
-            val text = titleInputTxt.text
-            sendReport()
-        } else if (view?.id == mapPinBtn.id) {
-            Log.d("VIEW_ID", "View ID: ${view?.id}")
-            setFormValues {
-                if (it) {
-                    showMap()
+        when (view?.id) {
+            sendReportBtn.id -> {
+                val text = titleInputTxt.text
+                sendReport()
+            }
+            mapPinBtn.id -> {
+                Log.d("VIEW_ID", "View ID: ${view?.id}")
+                setFormValues {
+                    if (it && !sending) {
+                        showMap()
+                    }
                 }
             }
-        } else  if (view?.id == img1Btn.id
-            || view?.id == img2Btn.id
-            || view?.id == img3Btn.id
-            || view?.id == img4Btn.id) {
-            showPictureDialog(view)
+            img1Btn.id -> showPictureDialog(view)
+            img2Btn.id -> showPictureDialog(view)
+            img3Btn.id -> showPictureDialog(view)
+            img4Btn.id -> showPictureDialog(view)
+            peopleAddBtn.id -> {
+                Log.d("VIEW_ID", "View ID: ${view?.id}")
+                setFormValues {
+                    if (it) {
+                        addPeopleDialog(view)
+                    }
+                }
+            }
+            peopleSubBtn.id -> {
+                Log.d("VIEW_ID", "View ID: ${view?.id}")
+                setFormValues {
+                    if (it) {
+                        removePeoplDialog(view)
+                    }
+                }
+            }
         }
+    }
+
+    override fun onItemSelected(arg0: AdapterView<*>, arg1: View, position: Int, id: Long) {
+        val id = ReportForm.hostListJson?.getJSONObject(position)?.getString("_id")
+        Log.d("SELECTED_HOST", ReportForm.hostListJson?.getJSONObject(position)?.toString())
+        ReportForm.hostId = id
+    }
+
+    override fun onNothingSelected(arg0: AdapterView<*>) {
+
     }
 
     fun showMap () {
@@ -139,6 +201,8 @@ class SendReportFragment : Fragment(), View.OnClickListener {
         ReportForm.long = long
         ReportForm.lat = lat
         ReportForm.tags = tagsInputTxt.text.toString()
+        ReportForm.category = categoryInputTxt.text.toString()
+
         cb(true)
     }
 
@@ -147,6 +211,7 @@ class SendReportFragment : Fragment(), View.OnClickListener {
         descriptionInputTxt.setText(ReportForm.description)
         locationInputTxt.setText(ReportForm.location)
         tagsInputTxt.setText(ReportForm.tags)
+        categoryInputTxt.setText(ReportForm.category)
         long = ReportForm.long
         lat = ReportForm.lat
         if (long != null && lat != null) {
@@ -254,10 +319,11 @@ class SendReportFragment : Fragment(), View.OnClickListener {
     }
 
     fun sendReport () {
+        showProgress()
         setFormValues{
             var report: NewReport? = null
             if (ReportForm.isValid()) {
-                report = NewReport(ReportForm.title, ReportForm.description, ReportForm.location, ReportForm.long, ReportForm.lat, ReportForm.tags)
+                report = NewReport(ReportForm.title, ReportForm.description, ReportForm.location, ReportForm.long, ReportForm.lat, ReportForm.tags, ReportForm.hostId, ReportForm.category)
                 if (ReportForm.img1 !== null) {
                     report.medias?.add(ReportForm.img1!!)
                 }
@@ -274,15 +340,18 @@ class SendReportFragment : Fragment(), View.OnClickListener {
                     report.medias?.add(ReportForm.img4!!)
                 }
 
+                report.people = ReportForm.peopleList
+
 
                 ReportService.sendReport(report)
                     .subscribeOn(Schedulers.io())
                     .subscribe{
+                        hideProgress()
                         if (it) {
                             clearForm()
                             Toast.makeText(context, "Report was successfully sent", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, "An error occur while sending report", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, ReportService.requestError, Toast.LENGTH_SHORT).show()
                         }
                     }
                     .run{
@@ -297,6 +366,7 @@ class SendReportFragment : Fragment(), View.OnClickListener {
     fun clearForm () {
         ReportForm.clear()
         val imgDrawable = resources.getDrawable(R.drawable.ic_menu_camera)
+        peopleTxt.setText("People Involved: ")
         img2Btn.setImageDrawable(imgDrawable)
         img1Btn.setImageDrawable(imgDrawable)
         img3Btn.setImageDrawable(imgDrawable)
@@ -305,4 +375,88 @@ class SendReportFragment : Fragment(), View.OnClickListener {
         coordinatesTxt.setText("Coordinates: (x, y)")
     }
 
+    fun loadHosts (cb: (ArrayList<String>) -> Unit) {
+        HostService.getHosts()
+            .subscribeOn(Schedulers.io())
+            .subscribe{hostArray ->
+                val hosts = ArrayList<String>()
+                try {
+                    for(i in 0..(hostArray.length() - 1)) {
+                        val host = Host(hostArray.getJSONObject(i))
+                        ReportForm.hostListJson = hostArray
+                        hosts.add("HOST: ${host.name!!}")
+                    }
+                    Log.d("HOSTS", hostArray.toString())
+                    cb(hosts)
+                }
+                catch (e: JSONException) {
+                    cb(hosts)
+                    Log.d("LOAD_HOST_ERROR", e.localizedMessage)
+                }
+                catch (e: Exception) {
+                    cb(hosts)
+                    Log.d("LOAD_HOST_ERROR", e.localizedMessage)
+                }
+            }
+            .run {}
+    }
+
+    // add people
+
+    fun addPeopleDialog(view: View) {
+        val addPeopleIntent = Intent(context, AddPersonActivity::class.java)
+
+        startActivity(addPeopleIntent)
+    }
+
+    fun loadPeople(textView: TextView) {
+        var txt = "People Involved: "
+        var first = true
+        var last = false
+        var people = ReportForm.peopleList
+        for (i in 0..(people.length() - 1)) {
+            val person = people.getJSONObject(i)
+            txt += "${person.getString("fname")}, "
+
+        }
+
+        textView.text = txt
+    }
+
+    fun removePeoplDialog(view: View) {
+        val people = ReportForm.peopleList
+        if (people.length() > 0) {
+            val removeDialog = AlertDialog.Builder(context)
+            var setPeople = ArrayList<String>()
+            removeDialog.setTitle("Remove People")
+
+
+            for (i in 0..(people.length() - 1)) {
+                val person = people.getJSONObject(i)
+                val name = person.getString("fname")
+                setPeople.add(name)
+            }
+            val array = arrayOfNulls<String>(setPeople.size)
+            var peopleItem = setPeople.toArray(array)
+            removeDialog.setItems(peopleItem
+            ) { dialog, which ->
+                Log.d("REMOVE_PEOPLE", "INDEX: $which")
+
+                ReportForm.peopleList.remove(which)
+
+                loadPeople(txtAddPeople)
+            }
+            removeDialog.show()
+        }
+    }
+
+    // progress bbar
+    fun showProgress () {
+        progressBar.visibility = View.VISIBLE
+        sending = true
+    }
+    fun hideProgress () {
+        progressBar.visibility = View.INVISIBLE
+        sending = false
+    }
 }

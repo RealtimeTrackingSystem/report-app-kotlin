@@ -1,6 +1,7 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Model
 
 import android.graphics.Bitmap
+import org.json.JSONArray
 
 class NewReport (
     var title: String? = "",
@@ -9,8 +10,10 @@ class NewReport (
     var long: Double? = 0.0,
     var lat: Double? = 0.0,
     var tags: String? = "",
+    var hostId: String? = "",
+    var category: String? = "",
     var medias: ArrayList<Bitmap> = ArrayList(),
-    var people: ArrayList<Person> = ArrayList(),
+    var people: JSONArray? = null,
     var properties: ArrayList<Property> = ArrayList()
 )
 

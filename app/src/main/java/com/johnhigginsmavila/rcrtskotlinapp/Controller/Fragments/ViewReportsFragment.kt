@@ -49,18 +49,14 @@ class ViewReportsFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_view_reports, container, false)
         getReports{
-            if (it && context != null) {
-                adapter = ReportListAdapter(context!!, ReportService.reports) { report ->
-
-                }
-
-                reportListView.adapter = adapter
-
-                val layoutManager = LinearLayoutManager(context)
-                reportListView.layoutManager = layoutManager
-                reportListView.setHasFixedSize(true)
+            adapter = ReportListAdapter(context!!, ReportService.reports) { report ->
 
             }
+
+            reportListView.adapter = adapter
+
+            val layoutManager = LinearLayoutManager(context)
+            reportListView.layoutManager = layoutManager
 
         }
         return v

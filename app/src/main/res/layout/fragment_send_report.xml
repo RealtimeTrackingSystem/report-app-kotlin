@@ -16,90 +16,162 @@
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:textAlignment="center" android:textSize="18sp"/>
-    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                  android:orientation="vertical" android:layout_marginTop="8dp"
-                  app:layout_constraintTop_toBottomOf="@+id/titleTxt" android:layout_marginBottom="8dp"
-                  app:layout_constraintBottom_toTopOf="@+id/sendReportBtn"
-                  app:layout_constraintVertical_bias="0.19999999" app:layout_constraintEnd_toEndOf="parent"
-                  android:layout_marginEnd="4dp" app:layout_constraintStart_toStartOf="parent"
-                  android:layout_marginStart="4dp">
-        <EditText
-                android:layout_width="381dp"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                tools:layout_editor_absoluteY="68dp" tools:layout_editor_absoluteX="56dp"
-                android:id="@+id/titleInputTxt" android:hint="Title" android:textColorHint="@color/colorAccent"
-        />
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/descriptionInputTxt" android:textColorHint="@color/colorAccent"
-                android:hint="Description"/>
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/locationInputTxt" android:textColorHint="@color/colorAccent"
-                android:hint="Location"/>
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/tagsInputTxt" android:textColorHint="@color/colorAccent"
-                android:hint="Tags separeted by spaces"/>
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="75dp">
-            <TextView
-                    android:text="Coordinates: (x, y)"
-                    android:layout_width="283dp"
-                    android:layout_height="match_parent" android:id="@+id/coordinatesTxt" android:layout_weight="1"
-                    android:textSize="18sp"/>
-            <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_dialog_map"
-                    android:id="@+id/mapPinBtn" android:layout_weight="1"
-                    android:foregroundTint="@color/colorPrimary" tools:foregroundTint="@color/colorPrimary"
-                    android:tint="@color/colorPrimary"/>
+    <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/sendReportBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/titleTxt"
+            app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="1.0"
+            android:id="@+id/scrollView3">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                      android:orientation="vertical"
+                      android:id="@+id/linearLayout" tools:layout_editor_absoluteY="31dp">
+            <EditText
+                    android:layout_width="381dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    tools:layout_editor_absoluteY="68dp" tools:layout_editor_absoluteX="56dp"
+                    android:id="@+id/titleInputTxt" android:hint="Title" android:textColorHint="@color/colorAccent"
+            />
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/descriptionInputTxt" android:textColorHint="@color/colorAccent"
+                    android:hint="Description"/>
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/locationInputTxt" android:textColorHint="@color/colorAccent"
+                    android:hint="Location"/>
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/tagsInputTxt" android:textColorHint="@color/colorAccent"
+                    android:hint="Tags separeted by spaces"/>
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/categoryInputTxt" android:hint="Category"
+                    android:textColorHint="@color/colorAccent"/>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp">
+                <TextView
+                        android:text="Coordinates: (x, y)"
+                        android:layout_width="283dp"
+                        android:layout_height="match_parent" android:id="@+id/coordinatesTxt" android:layout_weight="1"
+                        android:textSize="18sp"/>
+                <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_dialog_map"
+                        android:id="@+id/mapPinBtn" android:layout_weight="1"
+                        android:foregroundTint="@color/colorPrimary" tools:foregroundTint="@color/colorPrimary"
+                        android:tint="@color/colorPrimary"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="85dp" tools:layout_editor_absoluteY="196dp"
+                    tools:layout_editor_absoluteX="16dp">
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                        android:id="@+id/img1Btn" android:layout_weight="1" android:scaleType="centerInside"
+                />
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                        android:id="@+id/img2Btn" android:layout_weight="1" android:scaleType="centerInside"
+                />
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                        android:id="@+id/img3Btn" android:layout_weight="1" android:scaleType="centerInside"
+                />
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
+                        android:id="@+id/img4Btn" android:layout_weight="1" android:scaleType="centerInside"
+                />
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp" tools:layout_editor_absoluteY="196dp"
+                    tools:layout_editor_absoluteX="16dp">
+
+                <TextView
+                        android:text="People:"
+                        android:layout_width="222dp"
+                        android:layout_height="match_parent" android:id="@+id/peopleTxt" android:layout_weight="1"/>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" android:layout_weight="1">
+                    <ImageButton
+                            android:layout_height="match_parent" android:id="@+id/peopleAddBtn"
+                            android:layout_width="65dp" android:src="@drawable/addchannelbutton"/>
+                    <ImageButton
+                            android:layout_height="match_parent" android:id="@+id/peopleSubBtn"
+                            android:layout_width="65dp" android:src="@android:drawable/ic_notification_clear_all"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp" tools:layout_editor_absoluteY="196dp"
+                    tools:layout_editor_absoluteX="16dp" android:visibility="gone">
+
+                <TextView
+                        android:text="Properties:"
+                        android:layout_width="222dp"
+                        android:layout_height="match_parent" android:id="@+id/propertyTxt" android:layout_weight="1"/>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" android:layout_weight="1">
+                    <ImageButton
+                            android:layout_height="match_parent" android:id="@+id/propertyAddBtn"
+                            android:layout_width="65dp" android:src="@drawable/addchannelbutton"/>
+                    <ImageButton
+                            android:layout_height="match_parent" android:id="@+id/propertySubBtn"
+                            android:layout_width="65dp" android:src="@android:drawable/ic_notification_clear_all"/>
+                </LinearLayout>
+            </LinearLayout>
+            <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp" android:id="@+id/hostListSinner"/>
         </LinearLayout>
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="85dp" tools:layout_editor_absoluteY="196dp"
-                tools:layout_editor_absoluteX="16dp">
-            <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
-                    android:id="@+id/img1Btn" android:layout_weight="1" android:scaleType="centerInside"
-            />
-            <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
-                    android:id="@+id/img2Btn" android:layout_weight="1" android:scaleType="centerInside"
-            />
-            <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
-                    android:id="@+id/img3Btn" android:layout_weight="1" android:scaleType="centerInside"
-            />
-            <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" app:srcCompat="@android:drawable/ic_menu_camera"
-                    android:id="@+id/img4Btn" android:layout_weight="1" android:scaleType="centerInside"
-            />
-        </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="72dp"
+            android:layout_height="77dp"
+            android:id="@+id/progressBar" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/sendReportBtn" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:visibility="invisible"/>
     <Button
             android:text="Report"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/sendReportBtn" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:id="@+id/sendReportBtn" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
 </android.support.constraint.ConstraintLayout>

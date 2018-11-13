@@ -44,10 +44,10 @@ class ReportListAdapter (val context: Context, val reports: ArrayList<Report>, v
             title?.text = report.title
             status?.text = report.status
             description?.text = report.description
-            if (report.medias.count() > 0) {
+            if (report.medias != null && report.medias!!.count() > 0) {
                 preview.visibility = View.VISIBLE
                 // preview.setImageURI(Uri.parse(report.medias[0].metaData.getString("secure_url")))
-                Glide.with(App.prefs.context).load(Uri.parse(report.medias[0].metaData.getString("secure_url"))).into(preview)
+                Glide.with(App.prefs.context).load(Uri.parse(report.medias!![0].metaData.getString("secure_url"))).into(preview)
             } else {
                 preview.visibility = View.GONE
             }

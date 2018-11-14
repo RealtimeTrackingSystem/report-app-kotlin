@@ -7,6 +7,7 @@ import com.android.volley.toolbox.StringRequest
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.App
 import com.johnhigginsmavila.rcrtskotlinapp.Model.NewUser
 import com.johnhigginsmavila.rcrtskotlinapp.Model.User
+import com.johnhigginsmavila.rcrtskotlinapp.Utilities.FORGOT_PASSWORD_URL
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.LOGIN_URL
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.REFRESH_USER_URL
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.SIGNUP_URL
@@ -16,6 +17,7 @@ import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.NullPointerException
 
 object AuthService {
     var authResponseError: String? = null
@@ -121,6 +123,89 @@ object AuthService {
             App.prefs.requestQueue.add(loginRequest)
         }
     }
+
+    fun resetPassword (email: String): Observable<Boolean> {
+
+        return Observable.create {
+            val jsonBody = JSONObject()
+            jsonBody.put("email", email)
+            val requestBody = jsonBody.toString()
+            val resetPassword = object: JsonObjectRequest(Method.POST, FORGOT_PASSWORD_URL, null, Response.Listener { response ->
+                it.onNext(true)
+            }, Response.ErrorListener { error ->
+                try {
+                    val err = JSONObject(String(error.networkResponse.data))
+
+                    authResponseError = err.getString("message")
+                    it.onNext(false)
+                } catch (e: JSONException) {
+                    Log.d("RESET_PASSWORD_ERROR", e.localizedMessage)
+                    authResponseError = "Internal Server Error"
+                    it.onNext(false)
+                } catch (e: NullPointerException) {
+                    Log.d("RESET_PASSWORD_ERROR", e.localizedMessage)
+                    authResponseError = "Internal Server Error"
+                    it.onNext(false)
+                }
+            }) {
+                override fun getBodyContentType(): String {
+                    return "application/json; charset=utf-8"
+                }
+
+                override fun getBody(): ByteArray {
+                    return requestBody.toByteArray()
+                }
+            }
+
+            App.prefs.requestQueue.add(resetPassword)
+        }
+    }
+
+    fun changePassword (oldPassword: String, password: String, passwordConfirmation: String): Observable<Boolean> {
+        return Observable.create {
+            val jsonBody = JSONObject()
+            jsonBody.put("oldPassword", oldPassword)
+            jsonBody.put("password", password)
+            jsonBody.put("passwordConfirmation", passwordConfirmation)
+            val requestBody = jsonBody.toString()
+
+            val changePasswordRequest = object: JsonObjectRequest(Method.PUT, FORGOT_PASSWORD_URL, null, Response.Listener { response ->
+                it.onNext(true)
+            }, Response.ErrorListener { error ->
+                try {
+                    val err = JSONObject(String(error.networkResponse.data))
+
+                    authResponseError = err.getString("message")
+                    it.onNext(false)
+                } catch (e: JSONException) {
+                    Log.d("RESET_PASSWORD_ERROR", e.localizedMessage)
+                    authResponseError = "Internal Server Error"
+                    it.onNext(false)
+                } catch (e: NullPointerException) {
+                    Log.d("RESET_PASSWORD_ERROR", e.localizedMessage)
+                    authResponseError = "Internal Server Error"
+                    it.onNext(false)
+                }
+            }) {
+                override fun getBodyContentType(): String {
+                    return "application/json; charset=utf-8"
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val headers = HashMap<String, String>()
+                    headers.put("Authorization", App.prefs.authToken)
+                    return headers
+                }
+
+                override fun getBody(): ByteArray {
+                    return requestBody.toByteArray()
+                }
+            }
+
+            App.prefs.requestQueue.add(changePasswordRequest)
+        }
+    }
+
     fun loginUserAndLoadHost (loginName: String, password: String): Observable<Boolean> {
         return loginUser(loginName, password)
             .subscribeOn(Schedulers.io())

@@ -12,6 +12,7 @@ class NewReport (
     var tags: String? = "",
     var hostId: String? = "",
     var category: String? = "",
+    var urgency: String? = "",
     var medias: ArrayList<Bitmap> = ArrayList(),
     var people: JSONArray? = null,
     var properties: ArrayList<Property> = ArrayList()

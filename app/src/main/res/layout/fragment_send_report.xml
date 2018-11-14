@@ -153,7 +153,10 @@
             </LinearLayout>
             <Spinner
                     android:layout_width="match_parent"
-                    android:layout_height="45dp" android:id="@+id/hostListSinner"/>
+                    android:layout_height="45dp" android:id="@+id/hostListSinner" android:tag="hostListSpinner"/>
+            <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp" android:id="@+id/urgencySpinner" android:tag="urgencySpinner"/>
         </LinearLayout>
     </ScrollView>
 

@@ -67,6 +67,9 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
 
     var pos: LatLng? = null
 
+    val urgencyArray = arrayListOf<String>("LOW", "MEDIUM", "CRITICAL", "PRIORITY", "EMERGENCY")
+    val urgencyArrayView = arrayListOf<String>("Urgency: LOW", "Urgency: MEDIUM", "Urgency: CRITICAL", "Urgency: PRIORITY", "Urgency: EMERGENCY")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -105,6 +108,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                 val btnImg3 = v.findViewById<View>(R.id.img3Btn)
                 val btnImg4 = v.findViewById<View>(R.id.img4Btn)
                 val spinner = v.findViewById<Spinner>(R.id.hostListSinner)
+                val urgencySpinner = v.findViewById<Spinner>(R.id.urgencySpinner)
 
                 val btnAddPeople = v.findViewById<ImageButton>(R.id.peopleAddBtn)
                 txtAddPeople = v.findViewById<TextView>(R.id.peopleTxt)
@@ -120,6 +124,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                 btnImg3.setOnClickListener(this)
                 btnImg4.setOnClickListener(this)
                 spinner!!.setOnItemSelectedListener(this)
+                urgencySpinner!!.setOnItemSelectedListener(this)
 
                 btnAddPeople.setOnClickListener(this)
                 btnSubPeople.setOnClickListener(this)
@@ -132,6 +137,10 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
 
                     spinner.adapter = aa
                 }
+
+                val uaa = ArrayAdapter(context, android.R.layout.simple_spinner_item, urgencyArrayView)
+                uaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                urgencySpinner.adapter = uaa
             }
         }
 
@@ -189,10 +198,19 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         }
     }
 
-    override fun onItemSelected(arg0: AdapterView<*>, arg1: View, position: Int, id: Long) {
-        val id = ReportForm.hostListJson?.getJSONObject(position)?.getString("_id")
-        Log.d("SELECTED_HOST", ReportForm.hostListJson?.getJSONObject(position)?.toString())
-        ReportForm.hostId = id
+    override fun onItemSelected(adapterView: AdapterView<*>, view: View, position: Int, id: Long) {
+        when(adapterView.id) {
+            R.id.urgencySpinner -> {
+                val urgency = urgencyArray[position]
+                Log.d("SELECTED_URGENCY", urgency)
+                ReportForm.urgency = urgency
+            }
+           R.id.hostListSinner -> {
+                val id = ReportForm.hostListJson?.getJSONObject(position)?.getString("_id")
+                Log.d("SELECTED_HOST", ReportForm.hostListJson?.getJSONObject(position)?.toString())
+                ReportForm.hostId = id
+            }
+        }
     }
 
     override fun onNothingSelected(arg0: AdapterView<*>) {
@@ -334,11 +352,11 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     }
 
     fun sendReport () {
-        showProgress()
         setFormValues{
             var report: NewReport? = null
             if (ReportForm.isValid()) {
-                report = NewReport(ReportForm.title, ReportForm.description, ReportForm.location, ReportForm.long, ReportForm.lat, ReportForm.tags, ReportForm.hostId, ReportForm.category)
+                showProgress()
+                report = NewReport(ReportForm.title, ReportForm.description, ReportForm.location, ReportForm.long, ReportForm.lat, ReportForm.tags, ReportForm.hostId, ReportForm.category, ReportForm.urgency)
                 if (ReportForm.img1 !== null) {
                     report.medias?.add(ReportForm.img1!!)
                 }

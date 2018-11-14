@@ -2,7 +2,6 @@ package com.johnhigginsmavila.rcrtskotlinapp.Controller
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
@@ -10,14 +9,11 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import android.view.View
-import android.widget.TextView
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.HostFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.ProfileFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.SendReportFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.ViewReportsFragment
 import com.johnhigginsmavila.rcrtskotlinapp.R
-import com.johnhigginsmavila.rcrtskotlinapp.Services.UserService
 import kotlinx.android.synthetic.main.activity_menu.*
 import kotlinx.android.synthetic.main.app_bar_menu.*
 
@@ -45,7 +41,7 @@ class MenuActivity : AppCompatActivity(),
         displaySelectedScreen(R.id.menuSendReport)
 
         if (App.prefs.authToken == "") {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -54,7 +50,7 @@ class MenuActivity : AppCompatActivity(),
     override fun onResume() {
         super.onResume()
         if (App.prefs.authToken == "") {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }

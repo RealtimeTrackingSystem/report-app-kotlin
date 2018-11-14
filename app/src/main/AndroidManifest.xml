@@ -22,7 +22,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".Controller.MainActivity"
+                android:name=".Controller.LoginActivity"
                 android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -63,6 +63,10 @@
                 android:screenOrientation="portrait">
         </activity>
         <activity android:name=".Controller.AddPersonActivity">
+        </activity>
+        <activity android:name=".Controller.ForgotPasswordActivity">
+        </activity>
+        <activity android:name=".Controller.ChangePasswordActivity">
         </activity>
     </application>
 

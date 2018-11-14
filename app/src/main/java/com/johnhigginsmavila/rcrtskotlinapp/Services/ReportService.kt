@@ -60,6 +60,7 @@ object ReportService {
             reportRequest.addPart(MultipartRequest.FormPart("hostId", report.hostId))
             reportRequest.addPart(MultipartRequest.FormPart("category", report.category))
             reportRequest.addPart(MultipartRequest.FormPart("people", report.people.toString()))
+            reportRequest.addPart(MultipartRequest.FormPart("urgency", report.urgency))
 
             for (item in report.medias) {
                 var byte = ByteArrayOutputStream()

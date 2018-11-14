@@ -11,6 +11,7 @@ object ReportForm {
     var hostId: String? = null
     var tags: String? = null
     var category: String? = null
+    var urgency: String? = "LOW"
     var long: Double? = null
     var lat: Double? = null
     var img1: Bitmap? = null
@@ -29,6 +30,7 @@ object ReportForm {
             && tags != null && tags != ""
             && hostId != null && hostId != ""
             && category != null && category != ""
+            && urgency != null && urgency != ""
     }
 
     fun clear () {

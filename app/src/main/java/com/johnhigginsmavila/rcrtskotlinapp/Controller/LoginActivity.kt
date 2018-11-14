@@ -1,36 +1,31 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.johnhigginsmavila.rcrtskotlinapp.Model.HostMember
 import com.johnhigginsmavila.rcrtskotlinapp.R
 import com.johnhigginsmavila.rcrtskotlinapp.Services.AuthService
 import com.johnhigginsmavila.rcrtskotlinapp.Services.HostService
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.SharedPrefs
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_signup.*
+import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
 
         val prefs = SharedPrefs(this)
 
@@ -121,6 +116,12 @@ class MainActivity : AppCompatActivity() {
 
     fun hideProgressBar () {
         progressBar.visibility = View.INVISIBLE
+    }
+
+    fun forgotPassword (view: View) {
+        val forgotPasswordIntent = Intent(this, ForgotPasswordActivity::class.java)
+
+        startActivity(forgotPasswordIntent)
     }
 
 

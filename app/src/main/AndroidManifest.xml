@@ -68,6 +68,8 @@
         </activity>
         <activity android:name=".Controller.ChangePasswordActivity">
         </activity>
+        <activity android:name=".Controller.ChangeProfilePictureActivity">
+        </activity>
     </application>
 
 </manifest>

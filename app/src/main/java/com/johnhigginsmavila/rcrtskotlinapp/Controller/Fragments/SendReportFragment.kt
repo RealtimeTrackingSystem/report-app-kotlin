@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import com.android.volley.VolleyError
 import com.google.android.gms.maps.model.LatLng
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.AddPersonActivity
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.App
@@ -97,7 +98,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         showProgress()
         loadHosts { hosts ->
             if (hosts?.count() == 0) {
-                Toast.makeText(App.prefs.context, "Cannot load host list at this time", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Slow Internet connection", Toast.LENGTH_SHORT).show()
             } else {
                 val scrollView = v.findViewById<ScrollView>(R.id.scrollView3)
                 scrollView.visibility = View.VISIBLE
@@ -354,7 +355,8 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     fun sendReport () {
         setFormValues{
             var report: NewReport? = null
-            if (ReportForm.isValid()) {
+            if (ReportForm.isValid() && !sending) {
+                sending = true
                 showProgress()
                 report = NewReport(ReportForm.title, ReportForm.description, ReportForm.location, ReportForm.long, ReportForm.lat, ReportForm.tags, ReportForm.hostId, ReportForm.category, ReportForm.urgency)
                 if (ReportForm.img1 !== null) {
@@ -380,6 +382,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                     .subscribeOn(Schedulers.io())
                     .subscribe{
                         hideProgress()
+                        sending = false
                         if (it) {
                             clearForm()
                             Toast.makeText(context, "Report was successfully sent", Toast.LENGTH_SHORT).show()
@@ -423,11 +426,15 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                     cb(hosts)
                 }
                 catch (e: JSONException) {
-                    cb(null)
+                    cb(ArrayList())
                     Log.d("LOAD_HOST_ERROR", e.localizedMessage)
                 }
+                catch (e: VolleyError) {
+                    cb(ArrayList())
+                    Toast.makeText(context, "Slow Internet connection", Toast.LENGTH_SHORT).show()
+                }
                 catch (e: Exception) {
-                    cb(null)
+                    cb(ArrayList())
                     Log.d("LOAD_HOST_ERROR", e.localizedMessage)
                 }
             }

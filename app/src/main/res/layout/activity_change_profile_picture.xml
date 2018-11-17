@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Controller.ForgotPasswordActivity">
+        tools:context=".Controller.ChangeProfilePictureActivity">
     <ImageView
             android:layout_width="0dp"
             android:layout_height="0dp" app:srcCompat="@drawable/app_bg"
@@ -14,7 +14,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" android:scaleType="centerCrop"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintVertical_bias="0.0"/>
 
     <android.support.v7.widget.Toolbar
             android:layout_width="0dp"
@@ -35,33 +35,37 @@
             android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="@+id/toolbar"
             android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/toolbar"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:ems="10"
-            android:id="@+id/editText2" android:layout_marginTop="132dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView" android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.503"
-            android:hint="Email" android:textColorHint="@android:color/white" android:textColor="@android:color/white"/>
+    <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp" app:srcCompat="@drawable/light10"
+            android:id="@+id/changeProfilePicImg" android:layout_marginTop="68dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:scaleType="fitCenter"/>
     <Button
-            android:text="Reset Password"
+            android:text="Change Profile Picture"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" android:id="@+id/resetPasswordBtn"
+            android:layout_height="wrap_content"
+            android:id="@+id/changeProfilePicBtn" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/changeProfilePicImg"
+            app:layout_constraintStart_toStartOf="@+id/changeProfilePicImg"
+            app:layout_constraintEnd_toEndOf="@+id/changeProfilePicImg" android:textColor="@android:color/white"
+            android:background="@drawable/primary_btn" android:onClick="showPictureDialog"/>
+    <Button
+            android:text="Save Profile Picture"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" android:id="@+id/saveProfilePicBtn"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" android:background="@drawable/primary_btn"
-            android:textColor="@android:color/white" android:onClick="resetPassword"/>
+            app:layout_constraintBottom_toBottomOf="parent" android:textColor="@android:color/white"
+            android:background="@drawable/primary_btn" android:onClick="saveImage"/>
     <ProgressBar
             style="?android:attr/progressBarStyle"
-            android:layout_width="98dp"
-            android:layout_height="102dp"
-            android:id="@+id/resetPasswordProgressBar" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/resetPasswordBtn"
-            app:layout_constraintStart_toStartOf="@+id/menuProfilePicImg"
-            app:layout_constraintEnd_toEndOf="@+id/menuProfilePicImg" android:layout_marginEnd="8dp"
-            android:visibility="invisible"/>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/changeProfileProgressBar" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="@+id/changeProfilePicImg" app:layout_constraintEnd_toEndOf="@+id/changeProfilePicImg"
+            app:layout_constraintStart_toStartOf="@+id/changeProfilePicImg" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/changeProfilePicBtn" android:visibility="invisible"/>
 
 </android.support.constraint.ConstraintLayout>

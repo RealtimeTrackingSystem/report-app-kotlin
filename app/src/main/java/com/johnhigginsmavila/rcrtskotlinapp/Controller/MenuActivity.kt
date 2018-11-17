@@ -1,24 +1,45 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.MenuItem
+import android.util.AttributeSet
+import android.util.Log
+import android.view.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.HostFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.ProfileFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.SendReportFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.ViewReportsFragment
+import com.johnhigginsmavila.rcrtskotlinapp.Model.User
 import com.johnhigginsmavila.rcrtskotlinapp.R
 import kotlinx.android.synthetic.main.activity_menu.*
 import kotlinx.android.synthetic.main.app_bar_menu.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.lang.Exception
+import java.lang.NullPointerException
 
 class MenuActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener {
+
+    lateinit var profileNameTxt: TextView
+    lateinit var profileImg: ImageView
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +66,11 @@ class MenuActivity : AppCompatActivity(),
             startActivity(intent)
             finish()
         }
+
+        loadProfile()
+
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -113,5 +138,35 @@ class MenuActivity : AppCompatActivity(),
             ft.commit()
         }
         drawer_layout.closeDrawer(GravityCompat.START)
+    }
+
+    fun loadProfile () {
+
+        try {
+            val v = nav_view.getHeaderView(0)
+            profileNameTxt = v.findViewById(R.id.menuProfileTxt)
+            profileImg = v.findViewById(R.id.menuProfilePicImg)
+            val userData = JSONObject(App.prefs.userData)
+
+            val user = User(userData)
+            val image = user.profilePicture.getJSONObject("metaData")
+            val imgUrl = image.getString("secure_url")
+
+            Glide.with(this).load(Uri.parse(imgUrl)).into(profileImg)
+
+
+
+            profileNameTxt.text = "${user.fname} ${user.lname}"
+        } catch (e: JSONException) {
+            Log.d("LOAD_PROFILE_ERROR", e.localizedMessage)
+        } catch (e: GlideException) {
+            Log.d("LOAD_PROFILE_ERROR", e.localizedMessage)
+        } catch (e: NegativeArraySizeException) {
+            Log.d("LOAD_PROFILE_ERROR", e.localizedMessage)
+        } catch (e: NullPointerException) {
+            Log.d("LOAD_PROFILE_ERROR", e.localizedMessage)
+        } catch (e: Exception) {
+            Log.d("LOAD_PROFILE_ERROR", e.localizedMessage)
+        }
     }
 }

@@ -14,6 +14,10 @@ const val REFRESH_USER_URL = "$BASE_URL/api/auth/rehydrate"
 
 const val FORGOT_PASSWORD_URL = "$BASE_URL/api/auth/password"
 
+const val UPDATE_USER_URL = "$BASE_URL/api/auth/user"
+
+const val UPDATE_PROFILE_PIC_URL = "$BASE_URL/api/auth/profilepic"
+
 const val HOST_URL = "${BASE_URL}/api/hosts"
 
 const val HOST_REQUEST_URL = "${HOST_URL}/requests"

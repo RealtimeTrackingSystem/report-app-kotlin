@@ -7,6 +7,7 @@ class NewUser (
     var email: String = "",
     var fname: String = "",
     var lname: String = "",
+    var age: Int = 0,
     var gender: String = "",
     var alias: String = "",
     var street: String = "",
@@ -33,6 +34,7 @@ class NewUser (
             && zip != ""
             && password != ""
             && passwordConfirmation != ""
+            && age > 0
     }
 
     fun toJSON () : JSONObject {
@@ -50,6 +52,7 @@ class NewUser (
         json.put("country", country)
         json.put("zip", zip)
         json.put("password", password)
+        json.put("age", age)
         json.put("passwordConfirmation", passwordConfirmation)
         return json
     }

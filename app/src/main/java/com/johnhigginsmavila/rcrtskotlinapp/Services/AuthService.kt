@@ -1,22 +1,23 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Services
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.android.volley.Response
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.App
 import com.johnhigginsmavila.rcrtskotlinapp.Model.NewUser
 import com.johnhigginsmavila.rcrtskotlinapp.Model.User
-import com.johnhigginsmavila.rcrtskotlinapp.Utilities.FORGOT_PASSWORD_URL
-import com.johnhigginsmavila.rcrtskotlinapp.Utilities.LOGIN_URL
-import com.johnhigginsmavila.rcrtskotlinapp.Utilities.REFRESH_USER_URL
-import com.johnhigginsmavila.rcrtskotlinapp.Utilities.SIGNUP_URL
+import com.johnhigginsmavila.rcrtskotlinapp.Utilities.*
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONException
 import org.json.JSONObject
+import uk.me.hardill.volley.multipart.MultipartRequest
+import java.io.ByteArrayOutputStream
 import java.lang.NullPointerException
 
 object AuthService {
@@ -34,6 +35,7 @@ object AuthService {
             App.prefs.userData = userJson.toString()
             App.prefs.authToken = payload.getString("token")
             Log.d("AUTH", App.prefs.reporterId)
+
             Log.d("AUTH", userJson.getString("reporterID"))
             App.prefs.isLoggedIn = true
             it.onNext(true)
@@ -72,8 +74,24 @@ object AuthService {
             val registerRequest = object : JsonObjectRequest(Method.POST, SIGNUP_URL, null, Response.Listener { response ->
                 loadUserData(it, response)
             }, Response.ErrorListener { error ->
-                Log.d("ERROR", "Could not register user: $error")
-                it.onError(error)
+                try {
+                    val err = JSONObject(String(error.networkResponse.data))
+
+                    authResponseError = err.getString("message")
+                    it.onNext(false)
+                } catch (e: JSONException) {
+                    Log.d("SIGNUP_ERROR", e.localizedMessage)
+                    authResponseError = "Internal Server Error"
+                    it.onNext(false)
+                } catch (e: VolleyError) {
+                    Log.d("SIGNUP_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: NullPointerException) {
+                    Log.d("SIGNUP_ERROR", e.localizedMessage)
+                    authResponseError = "Internal Server Error"
+                    it.onNext(false)
+                }
             }) {
                 override fun getBodyContentType(): String {
                     return "application/json; charset=utf-8"
@@ -242,6 +260,92 @@ object AuthService {
             .flatMap {
                 processHostData(it)
             }
+    }
+
+    fun updateProfileDetails (user: User): Observable<Boolean> {
+        return Observable.create {
+
+            val requestBody = user.toJson().toString()
+
+            var updateUser = object: JsonObjectRequest(Method.PUT, UPDATE_USER_URL, null, Response.Listener { response ->
+                it.onNext(true)
+            }, Response.ErrorListener { error ->
+                try {
+                    val err = JSONObject(String(error.networkResponse.data))
+
+                    authResponseError = err.getString("message")
+                    it.onNext(false)
+                } catch (e: JSONException) {
+                    Log.d("UPDATE_PROFILE_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: VolleyError) {
+                    Log.d("UPDATE_PROFILE_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: NullPointerException) {
+                    Log.d("UPDATE_PROFILE_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                }
+            }) {
+                override fun getBodyContentType(): String {
+                    return "application/json; charset=utf-8"
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val headers = HashMap<String, String>()
+                    headers.put("Authorization", App.prefs.authToken)
+                    return headers
+                }
+
+                override fun getBody(): ByteArray {
+                    return requestBody.toByteArray()
+                }
+            }
+            App.prefs.requestQueue.add(updateUser)
+        }
+    }
+
+    fun updateProfilePicture (photo: Bitmap) : Observable<Boolean> {
+        return Observable.create {
+            val auth = App.prefs.authToken
+            val headers = HashMap<String, String>()
+            headers.put("Authorization", auth)
+            val changeProfilePic: MultipartRequest = MultipartRequest(UPDATE_PROFILE_PIC_URL, headers, { response ->
+                Log.d("REPONSE", response.toString())
+                it.onNext(true)
+            }, { error ->
+                try {
+                    val err = JSONObject(String(error.networkResponse.data))
+                    authResponseError = err.getString("message")
+                    it.onNext(false)
+                } catch (e: JSONException) {
+                    Log.d("UPDATE_PROFILE_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: VolleyError) {
+                    Log.d("UPDATE_PROFILE_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: NullPointerException) {
+                    Log.d("UPDATE_PROFILE_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: Exception) {
+                    Log.d("UPDATE_PROFILE_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                }
+            })
+
+            var byte = ByteArrayOutputStream()
+            photo.compress(Bitmap.CompressFormat.JPEG, 90, byte)
+            val fileName = App.prefs.reporterId
+            changeProfilePic.addPart(MultipartRequest.FilePart("profilepic", "image/jpeg", fileName, byte.toByteArray()))
+
+            App.prefs.requestQueue.add(changeProfilePic)
+        }
     }
 
 }

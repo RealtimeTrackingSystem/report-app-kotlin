@@ -9,28 +9,295 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-            android:text="PROFILE"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/textView3"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:textAlignment="center"/>
+    <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/saveChangesBtn"
+            app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <ImageView
+                        android:src="@color/colorPrimary"
+                        android:layout_width="0dp"
+                        android:layout_height="206dp" android:id="@+id/imageView3"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"/>
+                <ImageView
+                        android:src="@drawable/light1"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp" android:id="@+id/profileImg"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintTop_toTopOf="@+id/imageView3" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+                <TextView
+                        android:text="Change Profile Picture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/profileTxt"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@+id/profileImg"
+                        android:textColor="@android:color/white"
+                        app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
+                <TextView
+                        android:text="Change Password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/changePasswordBtn"
+                        android:textColor="@android:color/white"
+                        app:layout_constraintTop_toBottomOf="@+id/profileTxt"
+                        app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="16dp"
+                        android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toEndOf="parent" android:clickable="true"/>
+                <ImageView
+                        android:src="@android:drawable/ic_lock_power_off"
+                        android:layout_width="26dp"
+                        android:layout_height="24dp"
+                        android:id="@+id/logoutBtn"
+                        android:tint="@android:color/white" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toEndOf="parent" android:clickable="true"/>
+                <TextView
+                        android:text="Log Out"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/logoutLbl" android:layout_marginTop="4dp"
+                        app:layout_constraintTop_toBottomOf="@+id/logoutBtn"
+                        app:layout_constraintEnd_toEndOf="@+id/logoutBtn" android:textColor="@android:color/white"/>
+            </android.support.constraint.ConstraintLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Firstname"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/fnameLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/fnameTxt" android:layout_weight="1" tools:text="John"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Lastname"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/lnameLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/lnameTxt" android:layout_weight="1" tools:text="Doe"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Username"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/usrenameLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/usernameTxt" android:layout_weight="1" tools:text="johndoe"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Email"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/emailLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/emailTxt" android:layout_weight="1" tools:text="johndoe@test.com"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Age"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/ageLbl"
+                        android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/ageTxt" android:layout_weight="1" tools:text="17"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Nickname/ Alias"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/aliasLbl"
+                        android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/aliasTxt" android:layout_weight="1" tools:text="John"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp" android:layout_marginLeft="8dp" android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Gender"
+                        android:layout_width="253dp"
+                        android:layout_height="32dp" android:id="@+id/genderLbl" android:layout_weight="1"/>
+                <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:layout_weight="1"
+                        android:orientation="horizontal">
+                    <RadioButton
+                            android:text="Male"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:id="@+id/maleRB"
+                            android:layout_weight="1" android:checked="true"/>
+                    <RadioButton
+                            android:text="Female"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:id="@+id/femaleRB"
+                            android:layout_weight="1"/>
+                </RadioGroup>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Street"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/streetLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/streetTxt" android:layout_weight="1" tools:text="First Street"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Barangay"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/barangayLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/barangayTxt" android:layout_weight="1" tools:text="Payatas"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="City"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/cityLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/cityTxt" android:layout_weight="1" tools:text="Quezon City"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Region"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/regionLbl"
+                        android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/regionTxt" android:layout_weight="1" tools:text="NCR"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="Country"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/countryLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/countryTxt" android:layout_weight="1" tools:text="Philippines"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+                <TextView
+                        android:text="ZIP"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" android:id="@+id/zipLbl" android:layout_weight="1"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/zipTxt" android:layout_weight="1" tools:text="1117"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
     <Button
-            android:text="Logout"
+            android:text="Save Changes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/profileFragmentLogoutBtn"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
-    />
-    <Button
-            android:text="Change Password"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content" android:id="@+id/changePasswordBtn"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"/>
+            android:id="@+id/saveChangesBtn" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:background="@drawable/primary_btn"
+            android:textColor="@android:color/white"/>
 </android.support.constraint.ConstraintLayout>

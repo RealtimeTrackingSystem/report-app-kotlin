@@ -58,6 +58,7 @@ class SignupActivity : AppCompatActivity() {
         newUser.zip = zipTxt.text.toString()
         newUser.password = passwordTxt.text.toString()
         newUser.passwordConfirmation = passwordConfirmation.text.toString()
+        newUser.age = ageTxt.text.toString().toInt()
         if (!newUser.isValid()) {
             toast("Please Complete the form")
         } else if (newUser.passwordConfirmation != newUser.password) {
@@ -65,7 +66,7 @@ class SignupActivity : AppCompatActivity() {
         } else {
             AuthService.registerUser(newUser)
                 .subscribeOn(Schedulers.io())
-                .subscribe({ result ->
+                .subscribe{ result ->
                     Log.d("API", result.toString())
                     when (result) {
                         true -> {
@@ -77,11 +78,9 @@ class SignupActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
-                        else -> toast("Error")
+                        else -> toast(AuthService.authResponseError!!)
                     }
-                }, { error ->
-                    Log.d("API-ERROR", error.localizedMessage)
-                })
+                }
                 .run{ Log.d("API", "Hello") }
         }
     }

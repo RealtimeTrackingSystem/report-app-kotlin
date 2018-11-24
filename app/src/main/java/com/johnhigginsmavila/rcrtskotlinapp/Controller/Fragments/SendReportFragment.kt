@@ -64,12 +64,13 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
 
     lateinit var txtAddPeople: TextView
     lateinit var progressBar: ProgressBar
+    lateinit var btnSendReport: Button
     var sending = false
 
     var pos: LatLng? = null
 
-    val urgencyArray = arrayListOf<String>("LOW", "MEDIUM", "CRITICAL", "PRIORITY", "EMERGENCY")
-    val urgencyArrayView = arrayListOf<String>("Urgency: LOW", "Urgency: MEDIUM", "Urgency: CRITICAL", "Urgency: PRIORITY", "Urgency: EMERGENCY")
+    val urgencyArray = arrayListOf<String>("LOW", "MEDIUM", "EMERGENCY")
+    val urgencyArrayView = arrayListOf<String>("Urgency: LOW", "Urgency: MEDIUM", "Urgency: EMERGENCY")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +103,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
             } else {
                 val scrollView = v.findViewById<ScrollView>(R.id.scrollView3)
                 scrollView.visibility = View.VISIBLE
-                val btnLogout = v.findViewById<View>(R.id.sendReportBtn)
+                btnSendReport = v.findViewById<Button>(R.id.sendReportBtn)
                 val btnPinMap = v.findViewById<View>(R.id.mapPinBtn)
                 val btnImg1 = v.findViewById<View>(R.id.img1Btn)
                 val btnImg2 = v.findViewById<View>(R.id.img2Btn)
@@ -118,7 +119,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                 loadPeople(txtAddPeople)
 
 
-                btnLogout.setOnClickListener(this)
+                btnSendReport.setOnClickListener(this)
                 btnPinMap.setOnClickListener(this)
                 btnImg1.setOnClickListener(this)
                 btnImg2.setOnClickListener(this)
@@ -131,17 +132,24 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                 btnSubPeople.setOnClickListener(this)
 
 
-                if (hosts != null) {
+                if (hosts != null && hosts.count() > 0) {
                     hideProgress()
                     val aa = ArrayAdapter(context, android.R.layout.simple_spinner_item, hosts)
                     aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
                     spinner.adapter = aa
+                    try {
+                        spinner.setSelection(ReportForm.hostsIndex)
+                    }
+                    catch (e: Exception) {
+                        spinner.setSelection(0)
+                    }
                 }
 
                 val uaa = ArrayAdapter(context, android.R.layout.simple_spinner_item, urgencyArrayView)
                 uaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 urgencySpinner.adapter = uaa
+                urgencySpinner.setSelection(ReportForm.urgencyIndex)
             }
         }
 
@@ -202,11 +210,13 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     override fun onItemSelected(adapterView: AdapterView<*>, view: View, position: Int, id: Long) {
         when(adapterView.id) {
             R.id.urgencySpinner -> {
+                ReportForm.urgencyIndex = position
                 val urgency = urgencyArray[position]
                 Log.d("SELECTED_URGENCY", urgency)
                 ReportForm.urgency = urgency
             }
            R.id.hostListSinner -> {
+                ReportForm.hostsIndex = position
                 val id = ReportForm.hostListJson?.getJSONObject(position)?.getString("_id")
                 Log.d("SELECTED_HOST", ReportForm.hostListJson?.getJSONObject(position)?.toString())
                 ReportForm.hostId = id
@@ -241,20 +251,25 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     }
 
     fun loadFormValues () {
-        titleInputTxt.setText(ReportForm.title)
-        descriptionInputTxt.setText(ReportForm.description)
-        locationInputTxt.setText(ReportForm.location)
-        tagsInputTxt.setText(ReportForm.tags)
-        categoryInputTxt.setText(ReportForm.category)
-        long = ReportForm.long
-        lat = ReportForm.lat
-        if (long != null && lat != null) {
-            coordinatesTxt.text = "Coordinates: (${long}, ${lat})"
+        try {
+            titleInputTxt.setText(ReportForm.title)
+            descriptionInputTxt.setText(ReportForm.description)
+            locationInputTxt.setText(ReportForm.location)
+            tagsInputTxt.setText(ReportForm.tags)
+            categoryInputTxt.setText(ReportForm.category)
+            long = ReportForm.long
+            lat = ReportForm.lat
+            if (long != null && lat != null) {
+                coordinatesTxt.text = "Coordinates: (${long}, ${lat})"
+            }
+            if (ReportForm.img1 != null) img1Btn.setImageBitmap(ReportForm.img1)
+            if (ReportForm.img2 != null) img2Btn.setImageBitmap(ReportForm.img2)
+            if (ReportForm.img3 != null) img3Btn.setImageBitmap(ReportForm.img3)
+            if (ReportForm.img4 != null) img4Btn.setImageBitmap(ReportForm.img4)
         }
-        if (ReportForm.img1 != null) img1Btn.setImageBitmap(ReportForm.img1)
-        if (ReportForm.img2 != null) img2Btn.setImageBitmap(ReportForm.img2)
-        if (ReportForm.img3 != null) img3Btn.setImageBitmap(ReportForm.img3)
-        if (ReportForm.img4 != null) img4Btn.setImageBitmap(ReportForm.img4)
+        catch (e: Exception) {
+            Log.d("LOAD_FORM_VALUES_ERROR", e.localizedMessage)
+        }
     }
 
     fun showPictureDialog(view: View) {
@@ -353,11 +368,14 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     }
 
     fun sendReport () {
+        Log.d("SENDING_VALUE", sending.toString())
+        Log.d("FORM_VALIDITY", ReportForm.isValid().toString())
+        sendReportBtn.isEnabled = false
         setFormValues{
             var report: NewReport? = null
-            if (ReportForm.isValid() && !sending) {
-                sending = true
+            if (ReportForm.isValid() && sending == false) {
                 showProgress()
+                sending = true
                 report = NewReport(ReportForm.title, ReportForm.description, ReportForm.location, ReportForm.long, ReportForm.lat, ReportForm.tags, ReportForm.hostId, ReportForm.category, ReportForm.urgency)
                 if (ReportForm.img1 !== null) {
                     report.medias?.add(ReportForm.img1!!)
@@ -382,6 +400,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                     .subscribeOn(Schedulers.io())
                     .subscribe{
                         hideProgress()
+                        sendReportBtn.isEnabled = true
                         sending = false
                         if (it) {
                             clearForm()
@@ -394,6 +413,7 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
 
                     }
             } else {
+                hideProgress()
                 Toast.makeText(context, "Please complete the form", Toast.LENGTH_SHORT).show()
             }
         }
@@ -409,6 +429,8 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         img4Btn.setImageDrawable(imgDrawable)
         loadFormValues()
         coordinatesTxt.setText("Coordinates: (x, y)")
+        ReportForm.hostsIndex = 0
+        ReportForm.urgencyIndex = 0
     }
 
     fun loadHosts (cb: (hosts: ArrayList<String>?) -> Unit) {

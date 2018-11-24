@@ -26,16 +26,20 @@ object ReportService {
 
     var requestError: String? = null
 
+    var sending = false
+
     fun sendReport (report: NewReport): Observable<Boolean> {
         val auth = App.prefs.authToken
         val headers = HashMap<String, String>()
         headers.put("Authorization", auth)
         return Observable.create {
+            sending = false
             val reportRequest: MultipartRequest = MultipartRequest(REPORT_URL, headers, { response ->
-                Log.d("REPONSE", response.toString())
+                Log.d("REPONSE_22344", response.toString())
                 it.onNext(true)
             }, {errorResponse ->
-                Log.d("ERROR", errorResponse.toString())
+                sending = false
+                Log.d("ERROR_22344", errorResponse.toString())
                 try {
                     val err = String(errorResponse.networkResponse.data)
                     var errorBody = JSONObject(err)
@@ -68,7 +72,10 @@ object ReportService {
                 reportRequest.addPart(MultipartRequest.FilePart("reports", "image/jpeg", "${report.title}", byte.toByteArray()))
             }
 
-            App.prefs.requestQueue.add(reportRequest)
+            if (!sending) {
+                sending = true
+                App.prefs.requestQueue.add(reportRequest)
+            }
         }
     }
 

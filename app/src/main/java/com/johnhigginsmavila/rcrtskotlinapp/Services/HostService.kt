@@ -76,8 +76,14 @@ object HostService {
                     it.onNext(JSONArray())
                 }
             }, Response.ErrorListener { error ->
-                Log.d("HOSTS_LIST", error.localizedMessage)
-                it.onNext(JSONArray())
+                try {
+                    Log.d("HOSTS_LIST", error.localizedMessage)
+                    it.onNext(JSONArray())
+                }
+                catch (e: Exception) {
+                    Log.d("HOSTS_LIST", error.localizedMessage)
+                    it.onNext(JSONArray())
+                }
             }) {
                 override fun getBodyContentType(): String {
                     return "application/json; charset=utf-8"

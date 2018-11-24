@@ -20,6 +20,8 @@ object ReportForm {
     var img4: Bitmap? = null
     var hostListJson: JSONArray? = null
     var peopleList: JSONArray = JSONArray()
+    var urgencyIndex: Int = 0
+    var hostsIndex: Int = 0
 
     fun isValid (): Boolean {
         return title != "" && title != null

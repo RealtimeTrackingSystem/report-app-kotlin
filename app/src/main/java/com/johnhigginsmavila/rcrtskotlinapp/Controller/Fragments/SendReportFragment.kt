@@ -1,7 +1,6 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -11,19 +10,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import com.android.volley.VolleyError
 import com.google.android.gms.maps.model.LatLng
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.AddPersonActivity
-import com.johnhigginsmavila.rcrtskotlinapp.Controller.App
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.MapsActivity
 import com.johnhigginsmavila.rcrtskotlinapp.Model.Host
-import com.johnhigginsmavila.rcrtskotlinapp.Model.MediaUpload
 import com.johnhigginsmavila.rcrtskotlinapp.Model.NewReport
-import com.johnhigginsmavila.rcrtskotlinapp.Model.Report
 
 import com.johnhigginsmavila.rcrtskotlinapp.R
+import com.johnhigginsmavila.rcrtskotlinapp.Services.CategoryService
 import com.johnhigginsmavila.rcrtskotlinapp.Services.HostService
 import com.johnhigginsmavila.rcrtskotlinapp.Services.ReportForm
 import com.johnhigginsmavila.rcrtskotlinapp.Services.ReportService
@@ -31,7 +26,6 @@ import com.johnhigginsmavila.rcrtskotlinapp.Utilities.EXTRA_MAP_CALLED_FROM
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.NEW_REPORT
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_send_report.*
-import org.json.JSONException
 import java.io.IOException
 import java.lang.Exception
 
@@ -72,6 +66,11 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     val urgencyArray = arrayListOf<String>("LOW", "MEDIUM", "EMERGENCY")
     val urgencyArrayView = arrayListOf<String>("Urgency: LOW", "Urgency: MEDIUM", "Urgency: EMERGENCY")
 
+    lateinit var hostTxt: TextView
+    lateinit var categoryTxt: TextView
+
+    lateinit var v: View
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -88,72 +87,17 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     ): View? {
 
         // Inflate the layout for this fragment
-        val v = inflater.inflate(R.layout.fragment_send_report, container, false)
+        v = inflater.inflate(R.layout.fragment_send_report, container, false)
 
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        imm.hideSoftInputFromWindow(view?.windowToken, 0)
 
 
         progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
-        showProgress()
-        loadHosts { hosts ->
-            if (hosts?.count() == 0) {
-                Toast.makeText(context, "Slow Internet connection", Toast.LENGTH_SHORT).show()
-            } else {
-                val scrollView = v.findViewById<ScrollView>(R.id.scrollView3)
-                scrollView.visibility = View.VISIBLE
-                btnSendReport = v.findViewById<Button>(R.id.sendReportBtn)
-                val btnPinMap = v.findViewById<View>(R.id.mapPinBtn)
-                val btnImg1 = v.findViewById<View>(R.id.img1Btn)
-                val btnImg2 = v.findViewById<View>(R.id.img2Btn)
-                val btnImg3 = v.findViewById<View>(R.id.img3Btn)
-                val btnImg4 = v.findViewById<View>(R.id.img4Btn)
-                val spinner = v.findViewById<Spinner>(R.id.hostListSinner)
-                val urgencySpinner = v.findViewById<Spinner>(R.id.urgencySpinner)
-
-                val btnAddPeople = v.findViewById<ImageButton>(R.id.peopleAddBtn)
-                txtAddPeople = v.findViewById<TextView>(R.id.peopleTxt)
-                val btnSubPeople = v.findViewById<ImageButton>(R.id.peopleSubBtn)
-
-                loadPeople(txtAddPeople)
+        progressBar.visibility = View.INVISIBLE
 
 
-                btnSendReport.setOnClickListener(this)
-                btnPinMap.setOnClickListener(this)
-                btnImg1.setOnClickListener(this)
-                btnImg2.setOnClickListener(this)
-                btnImg3.setOnClickListener(this)
-                btnImg4.setOnClickListener(this)
-                spinner!!.setOnItemSelectedListener(this)
-                urgencySpinner!!.setOnItemSelectedListener(this)
+        load(v)
 
-                btnAddPeople.setOnClickListener(this)
-                btnSubPeople.setOnClickListener(this)
-
-
-                if (hosts != null && hosts.count() > 0) {
-                    hideProgress()
-                    val aa = ArrayAdapter(context, android.R.layout.simple_spinner_item, hosts)
-                    aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-                    spinner.adapter = aa
-                    try {
-                        spinner.setSelection(ReportForm.hostsIndex)
-                    }
-                    catch (e: Exception) {
-                        spinner.setSelection(0)
-                    }
-                }
-
-                val uaa = ArrayAdapter(context, android.R.layout.simple_spinner_item, urgencyArrayView)
-                uaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                urgencySpinner.adapter = uaa
-                urgencySpinner.setSelection(ReportForm.urgencyIndex)
-            }
-        }
-
-
+        // val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         // Inflate the layout for this fragment
         return v
     }
@@ -161,8 +105,6 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         setFormValues{}
-
-
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -204,6 +146,12 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                     }
                 }
             }
+            selectHostBtn.id -> {
+                showHostListDialog(view)
+            }
+            selectCategoryBtn.id -> {
+                showCategoryDialog(view)
+            }
         }
     }
 
@@ -214,12 +162,6 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
                 val urgency = urgencyArray[position]
                 Log.d("SELECTED_URGENCY", urgency)
                 ReportForm.urgency = urgency
-            }
-           R.id.hostListSinner -> {
-                ReportForm.hostsIndex = position
-                val id = ReportForm.hostListJson?.getJSONObject(position)?.getString("_id")
-                Log.d("SELECTED_HOST", ReportForm.hostListJson?.getJSONObject(position)?.toString())
-                ReportForm.hostId = id
             }
         }
     }
@@ -245,7 +187,6 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         ReportForm.long = long
         ReportForm.lat = lat
         ReportForm.tags = tagsInputTxt.text.toString()
-        ReportForm.category = categoryInputTxt.text.toString()
 
         cb(true)
     }
@@ -256,9 +197,11 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
             descriptionInputTxt.setText(ReportForm.description)
             locationInputTxt.setText(ReportForm.location)
             tagsInputTxt.setText(ReportForm.tags)
-            categoryInputTxt.setText(ReportForm.category)
             long = ReportForm.long
             lat = ReportForm.lat
+            if (ReportForm.hostName != "" && ReportForm.hostName != null) {
+                hostTxt.setText("Host: ${ReportForm.hostName}")
+            }
             if (long != null && lat != null) {
                 coordinatesTxt.text = "Coordinates: (${long}, ${lat})"
             }
@@ -270,6 +213,72 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         catch (e: Exception) {
             Log.d("LOAD_FORM_VALUES_ERROR", e.localizedMessage)
         }
+    }
+
+    fun loadHosts (cb: (ArrayList<Host>?) -> Unit) {
+        HostService.getHosts()
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                var hosts = ArrayList<Host>()
+                try {
+                    for (i in 0..(it.length() - 1)) {
+                        val hostData = it.getJSONObject(i)
+                        Log.d("HOST_DATA", hostData.toString())
+                        val host = Host(hostData)
+                        hosts.add(host)
+                    }
+                    if (hosts.count() == it.length()) {
+                        cb(hosts)
+                    }
+                }
+                catch (e: Exception) {
+                    cb(null)
+                }
+            }
+            .run {}
+    }
+
+    fun showHostListDialog(view: View) {
+        loadHosts {
+            if (it != null) {
+                Toast.makeText(context, "Working", Toast.LENGTH_SHORT).show()
+                val hostDialog = AlertDialog.Builder(context)
+                hostDialog.setTitle("Select Host")
+                val list = ArrayList<String>()
+                for(i in 0..it.lastIndex) {
+                    Log.d("HOST", it[i].name)
+                    list.add(it[i].name!!)
+                }
+
+                val array = arrayOfNulls<String>(list.size)
+                val hostArray = list.toArray(array)
+                hostDialog.setItems(hostArray
+                ) { dialog, position ->
+                    Log.d("HOST_SELECTED", array[position])
+
+                    hostTxt.setText("Host: ${array[position]}")
+
+                    ReportForm.hostId = it[position]._id!!
+                }
+                println(hostArray.toString())
+                hostDialog.show()
+            } else {
+                Toast.makeText(context, "Not Working", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun showCategoryDialog(view: View) {
+        val categoryDialog = AlertDialog.Builder(context)
+        categoryDialog.setTitle("Select Category")
+        val categoriesArray = CategoryService.categoriesArray
+        categoryDialog.setItems(categoriesArray
+        ) { dialog, position ->
+            categoryTxt.setText("Category: ${categoriesArray[position]}")
+            ReportForm.categoryName = categoriesArray[position]
+            ReportForm.category = CategoryService.categories[position].toJson()
+        }
+        categoryDialog.show()
     }
 
     fun showPictureDialog(view: View) {
@@ -433,36 +442,6 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         ReportForm.urgencyIndex = 0
     }
 
-    fun loadHosts (cb: (hosts: ArrayList<String>?) -> Unit) {
-        HostService.getHosts()
-            .subscribeOn(Schedulers.io())
-            .subscribe{hostArray ->
-                val hosts = ArrayList<String>()
-                try {
-                    for(i in 0..(hostArray.length() - 1)) {
-                        val host = Host(hostArray.getJSONObject(i))
-                        ReportForm.hostListJson = hostArray
-                        hosts.add("HOST: ${host.name!!}")
-                    }
-                    Log.d("HOSTS", hostArray.toString())
-                    cb(hosts)
-                }
-                catch (e: JSONException) {
-                    cb(ArrayList())
-                    Log.d("LOAD_HOST_ERROR", e.localizedMessage)
-                }
-                catch (e: VolleyError) {
-                    cb(ArrayList())
-                    Toast.makeText(context, "Slow Internet connection", Toast.LENGTH_SHORT).show()
-                }
-                catch (e: Exception) {
-                    cb(ArrayList())
-                    Log.d("LOAD_HOST_ERROR", e.localizedMessage)
-                }
-            }
-            .run {}
-    }
-
     // add people
 
     fun addPeopleDialog(view: View) {
@@ -521,5 +500,54 @@ class SendReportFragment : Fragment(), View.OnClickListener, AdapterView.OnItemS
         progressBar.visibility = View.INVISIBLE
         sending = false
     }
+
+    fun load (v: View) {
+        val scrollView = v.findViewById<ScrollView>(R.id.scrollView3)
+        scrollView.visibility = View.VISIBLE
+        btnSendReport = v.findViewById<Button>(R.id.sendReportBtn)
+        val btnPinMap = v.findViewById<View>(R.id.mapPinBtn)
+        val btnImg1 = v.findViewById<View>(R.id.img1Btn)
+        val btnImg2 = v.findViewById<View>(R.id.img2Btn)
+        val btnImg3 = v.findViewById<View>(R.id.img3Btn)
+        val btnImg4 = v.findViewById<View>(R.id.img4Btn)
+        val urgencySpinner = v.findViewById<Spinner>(R.id.urgencySpinner)
+        val selectHostBtn = v.findViewById<Button>(R.id.selectHostBtn)
+        val selectCategoryBtn = v.findViewById<Button>(R.id.selectCategoryBtn)
+        hostTxt = v.findViewById(R.id.hostTxt)
+        categoryTxt = v.findViewById(R.id.categoryTxt)
+
+        val btnAddPeople = v.findViewById<ImageButton>(R.id.peopleAddBtn)
+        txtAddPeople = v.findViewById<TextView>(R.id.peopleTxt)
+        val btnSubPeople = v.findViewById<ImageButton>(R.id.peopleSubBtn)
+        val titleInputTxt = v.findViewById<View>(R.id.titleInputTxt)
+        loadPeople(txtAddPeople)
+
+        if (ReportForm.hostName != "" && ReportForm.hostName != null) {
+            hostTxt.setText("Host: ${ReportForm.hostName}")
+        }
+
+
+        btnSendReport.setOnClickListener(this)
+        btnPinMap.setOnClickListener(this)
+        btnImg1.setOnClickListener(this)
+        btnImg2.setOnClickListener(this)
+        btnImg3.setOnClickListener(this)
+        btnImg4.setOnClickListener(this)
+        urgencySpinner!!.setOnItemSelectedListener(this)
+
+        btnAddPeople.setOnClickListener(this)
+        btnSubPeople.setOnClickListener(this)
+        selectHostBtn.setOnClickListener(this)
+        selectCategoryBtn.setOnClickListener(this)
+
+
+        val uaa = ArrayAdapter(context, android.R.layout.simple_spinner_item, urgencyArrayView)
+        uaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        urgencySpinner.adapter = uaa
+        urgencySpinner.setSelection(ReportForm.urgencyIndex)
+
+    }
+
+
 
 }

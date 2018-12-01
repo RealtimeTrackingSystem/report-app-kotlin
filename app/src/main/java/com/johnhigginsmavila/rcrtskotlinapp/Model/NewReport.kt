@@ -2,6 +2,7 @@ package com.johnhigginsmavila.rcrtskotlinapp.Model
 
 import android.graphics.Bitmap
 import org.json.JSONArray
+import org.json.JSONObject
 
 class NewReport (
     var title: String? = "",
@@ -11,7 +12,7 @@ class NewReport (
     var lat: Double? = 0.0,
     var tags: String? = "",
     var hostId: String? = "",
-    var category: String? = "",
+    var category: JSONObject? = null,
     var urgency: String? = "",
     var medias: ArrayList<Bitmap> = ArrayList(),
     var people: JSONArray? = null,

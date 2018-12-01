@@ -62,7 +62,7 @@ object ReportService {
             reportRequest.addPart(MultipartRequest.FormPart("lat", report.lat.toString()))
             reportRequest.addPart(MultipartRequest.FormPart("tags", tags))
             reportRequest.addPart(MultipartRequest.FormPart("hostId", report.hostId))
-            reportRequest.addPart(MultipartRequest.FormPart("category", report.category))
+            reportRequest.addPart(MultipartRequest.FormPart("category", report.category.toString()))
             reportRequest.addPart(MultipartRequest.FormPart("people", report.people.toString()))
             reportRequest.addPart(MultipartRequest.FormPart("urgency", report.urgency))
 

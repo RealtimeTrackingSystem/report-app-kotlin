@@ -18,6 +18,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.NullPointerException
 
 class LoginActivity : AppCompatActivity() {
 
@@ -90,7 +91,15 @@ class LoginActivity : AppCompatActivity() {
                         else -> showToast(AuthService.authResponseError!!)
                     }
                 }, { error ->
-                    Log.d("API-ERROR", error.localizedMessage)
+                    try {
+                        Log.d("API-ERROR", error.localizedMessage)
+                    }
+                    catch (e: NullPointerException) {
+                        Log.d("API-ERROR", error.localizedMessage)
+                    }
+                    catch (e: Exception) {
+                        Log.d("API-ERROR", error.localizedMessage)
+                    }
                 })
                 .run{ Log.d("API", "Hello") }
         } else {

@@ -51,6 +51,7 @@ object HostService {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
+                    Log.d("AUTH_TOKEN", App.prefs.authToken)
                     headers.put("Authorization", App.prefs.authToken)
                     return headers
                 }
@@ -61,7 +62,7 @@ object HostService {
 
     fun getHosts () : Observable<JSONArray> {
         return Observable.create{
-            var loadHosts = object: JsonObjectRequest(Method.GET, HOST_URL, null, Response.Listener { response ->
+            var loadHosts = object: JsonObjectRequest(Method.GET, "$HOST_URL?isApproved=true", null, Response.Listener { response ->
                 try {
                     val statusCode = response.getInt("httpCode")
                     if (statusCode == 200) {

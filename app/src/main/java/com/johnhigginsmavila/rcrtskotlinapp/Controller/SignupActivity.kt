@@ -1,10 +1,13 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller
 
+import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.RadioButton
 import android.widget.Toast
 import com.johnhigginsmavila.rcrtskotlinapp.Model.NewUser
@@ -12,6 +15,7 @@ import com.johnhigginsmavila.rcrtskotlinapp.R
 import com.johnhigginsmavila.rcrtskotlinapp.Services.AuthService
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_signup.*
+import java.util.*
 
 class SignupActivity : AppCompatActivity() {
 
@@ -21,6 +25,8 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
         newUser.gender = "M"
+
+        birthdayTxt.isEnabled = false
     }
 
     fun onRadioButtonClicked(view: View) {
@@ -45,6 +51,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     fun onSignupClicked (view: View) {
+        hideKeyboard()
         newUser.username = usernameTxt.text.toString()
         newUser.email = emailTxt.text.toString()
         newUser.lname = lnameTxt.text.toString()
@@ -58,12 +65,12 @@ class SignupActivity : AppCompatActivity() {
         newUser.zip = zipTxt.text.toString()
         newUser.password = passwordTxt.text.toString()
         newUser.passwordConfirmation = passwordConfirmation.text.toString()
-        newUser.age = ageTxt.text.toString().toInt()
         if (!newUser.isValid()) {
             toast("Please Complete the form")
         } else if (newUser.passwordConfirmation != newUser.password) {
             toast("Passwords do not match")
         } else {
+            signupScrollView.visibility = View.VISIBLE
             AuthService.registerUser(newUser)
                 .subscribeOn(Schedulers.io())
                 .subscribe{ result ->
@@ -73,19 +80,45 @@ class SignupActivity : AppCompatActivity() {
                             // enableSpinner(false)
                             Log.d("USER", App.prefs.userData)
                             // showToast("You are logged in")
-                            val intent = Intent(this, MenuActivity::class.java)
+                            val intent = Intent(this, LoginActivity::class.java)
 
                             startActivity(intent)
                             finish()
                         }
-                        else -> toast(AuthService.authResponseError!!)
+                        else -> {
+                            toast(AuthService.authResponseError!!)
+                            signupScrollView.visibility = View.INVISIBLE
+                        }
                     }
                 }
-                .run{ Log.d("API", "Hello") }
+                .run{  }
         }
     }
 
     fun toast (text: String) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+    }
+
+    fun selectDate (view: View) {
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+           newUser.setBirthday(year, monthOfYear, dayOfMonth)
+            birthdayTxt.setText(newUser.birthday)
+        }, year, month, day)
+
+        dpd.datePicker.maxDate = System.currentTimeMillis()
+
+        dpd.show()
+    }
+
+    fun hideKeyboard() {
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        if (inputManager.isAcceptingText) {
+            inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        }
     }
 }

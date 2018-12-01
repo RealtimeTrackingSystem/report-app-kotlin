@@ -1,5 +1,6 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,9 +25,12 @@ import com.johnhigginsmavila.rcrtskotlinapp.Services.UserService
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.SharedPrefs
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_signup.*
+import kotlinx.android.synthetic.main.fragment_profile.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.Exception
+import java.util.*
 import kotlin.math.ln
 
 // TODO: Rename parameter arguments, choose names that match
@@ -54,7 +58,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
     lateinit var lnameTxt: TextView
     lateinit var usernameTxt: TextView
     lateinit var aliasTxt: TextView
-    lateinit var ageTxt: TextView
+    lateinit var birthdayTxt: TextView
     lateinit var emailTxt: TextView
     lateinit var streetTxt: TextView
     lateinit var barangayTxt: TextView
@@ -68,6 +72,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
     lateinit var profileImg: ImageView
     lateinit var changePasswordTxt: TextView
     lateinit var profileTxt: TextView
+    lateinit var setDateBtn: ImageButton
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,11 +102,13 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         loadProfile(v)
 
         logoutBtn = v.findViewById(R.id.logoutBtn)
+        setDateBtn = v.findViewById(R.id.getDateBtn)
 
         logoutBtn.setOnClickListener(this)
 
         changePasswordTxt.setOnClickListener(this)
         profileTxt.setOnClickListener(this)
+        setDateBtn.setOnClickListener(this)
 
         // Inflate the layout for this fragment
         return v
@@ -134,6 +141,20 @@ class ProfileFragment : Fragment(), View.OnClickListener {
                 val intent = Intent(context, ChangeProfilePictureActivity::class.java)
                 startActivity(intent)
             }
+            R.id.getDateBtn -> {
+                val c = Calendar.getInstance()
+                val year = c.get(Calendar.YEAR)
+                val month = c.get(Calendar.MONTH)
+                val day = c.get(Calendar.DAY_OF_MONTH)
+                val dpd = DatePickerDialog(context, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                    user.setBirthday(year, monthOfYear, dayOfMonth)
+                    birthdayTxt.setText(user.birthday)
+                }, year, month, day)
+
+                dpd.datePicker.maxDate = System.currentTimeMillis()
+
+                dpd.show()
+            }
         }
     }
 
@@ -142,7 +163,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         lnameTxt = v.findViewById<TextView>(R.id.lnameTxt)
         usernameTxt = v.findViewById<TextView>(R.id.usernameTxt)
         aliasTxt = v.findViewById<TextView>(R.id.aliasTxt)
-        ageTxt = v.findViewById<TextView>(R.id.ageTxt)
+        birthdayTxt = v.findViewById<TextView>(R.id.birthDayTxt)
         emailTxt = v.findViewById<TextView>(R.id.emailTxt)
         streetTxt = v.findViewById<TextView>(R.id.streetTxt)
         barangayTxt = v.findViewById<TextView>(R.id.barangayTxt)
@@ -153,6 +174,8 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         maleRb = v.findViewById<RadioButton>(R.id.maleRB)
         femaleRb = v.findViewById<RadioButton>(R.id.femaleRB)
 
+        birthdayTxt.isEnabled = false
+
         val userData = JSONObject(App.prefs.userData)
 
         Log.d("user_data", userData.toString())
@@ -162,7 +185,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         lnameTxt.text = user.lname
         usernameTxt.text = user.username
         aliasTxt.text = user.alias
-        ageTxt.text = user.age.toString()
+        birthdayTxt.text = user.birthday
         emailTxt.text = user.email
         streetTxt.text = user.street
         barangayTxt.text = user.barangay
@@ -196,7 +219,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         user.region = regionTxt.text.toString()
         user.country = countryTxt.text.toString()
         user.zip = zipTxt.text.toString()
-        user.age = ageTxt.text.toString().toInt()
+        user.birthday = birthdayTxt.text.toString()
 
         val updatedUser = user.toJson()
         println(updatedUser.toString())

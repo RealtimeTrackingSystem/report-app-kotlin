@@ -16,7 +16,7 @@ class Host {
     var defaultTags: ArrayList<String>? = null
     var long: Double? = null
     var lat: Double? = null
-    var type: String? = null
+    // var type: String? = null
     var street: String? = null
     var barangay: String? = null
     var city: String? = null
@@ -42,7 +42,7 @@ class Host {
             }
             long = h.getDouble("long")
             lat = h.getDouble("lat")
-            type = h.getString("type")
+            // type = h.getString("type")
             street = h.getString("street")
             barangay = h.getString("barangay")
             city = h.getString("city")
@@ -67,7 +67,7 @@ class Host {
         json.put("defaultTags", defaultTags)
         json.put("long", long)
         json.put("lat", lat)
-        json.put("type", type)
+        // json.put("type", type)
         json.put("street", street)
         json.put("barangay", barangay)
         json.put("city", city)

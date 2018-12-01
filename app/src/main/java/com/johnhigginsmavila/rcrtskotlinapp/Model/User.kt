@@ -15,7 +15,7 @@ class User {
     var email: String = ""
     var fname: String = ""
     var lname: String = ""
-    var age: Int = 0
+    var birthday: String = ""
     var gender: String = ""
     var alias: String = ""
     var street: String = ""
@@ -38,7 +38,7 @@ class User {
         email: String,
         fname: String,
         lname: String,
-        age: Int,
+        birthday: String,
         gender: String,
         alias: String,
         street: String,
@@ -59,7 +59,7 @@ class User {
         this.email = email
         this.fname = fname
         this.lname = lname
-        this.age = age
+        this.birthday = birthday
         this.gender = gender
         this.alias = alias
         this.street = street
@@ -92,12 +92,16 @@ class User {
             this.zip = user.getString("zip")
             this.createdAt = user.getString("createdAt")
             this.updatedAt = user.getString("updatedAt")
-            this.age = user.getInt("age")
+            this.birthday = user.getString("birthday")
             this.profilePicture = user.getJSONObject("profilePicture")
         }
         catch (e: JSONException) {
             Log.d("USER_CLASS_ERROR", e.localizedMessage)
         }
+    }
+
+    fun setBirthday (year: Int, month: Int, day: Int) {
+        this.birthday = "$year-${month + 1}-$day"
     }
 
     fun convertToJsonArray (hosts: ArrayList<HostMember>): JSONArray {
@@ -129,7 +133,7 @@ class User {
         json.put("zip", this.zip)
         json.put("createdAt", this.createdAt)
         json.put("updatedAt", this.updatedAt)
-        json.put("age", this.age)
+        json.put("birthday", this.birthday)
         val hostsJsonArray: JSONArray = convertToJsonArray(this.hosts)
         json.put("hosts", hostsJsonArray.toString())
         return json

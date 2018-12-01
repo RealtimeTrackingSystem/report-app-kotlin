@@ -141,16 +141,26 @@
                     android:layout_height="match_parent" android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp">
                 <TextView
-                        android:text="Age"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content" android:id="@+id/ageLbl"
+                        android:text="Birthday"
+                        android:layout_width="255dp"
+                        android:layout_height="41dp" android:id="@+id/birthdayLbl"
                         android:layout_weight="1"/>
-                <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:ems="10"
-                        android:id="@+id/ageTxt" android:layout_weight="1" tools:text="17"/>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:layout_weight="1">
+                    <EditText
+                            android:layout_width="193dp"
+                            android:layout_height="match_parent"
+                            android:inputType="textPersonName"
+                            android:ems="10"
+                            android:id="@+id/birthDayTxt" android:layout_weight="1" tools:text="17"/>
+                    <ImageButton
+                            android:src="@android:drawable/ic_menu_my_calendar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:id="@+id/getDateBtn"
+                            android:layout_weight="1"/>
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                     android:orientation="horizontal"

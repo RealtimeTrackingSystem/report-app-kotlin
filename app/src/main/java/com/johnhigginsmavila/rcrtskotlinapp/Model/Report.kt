@@ -12,13 +12,14 @@ class Report {
     var long: Double? = null
     var lat: Double? = null
     var tags: String? = null
-    var category: String? = null
+    var category: JSONObject? = null
     var _reporter: String? = null
     var _host: String? = null
     var status: String? = null
     var people: ArrayList<Person>? = null
     var properties: ArrayList<Property>? = null
     var medias: ArrayList<MediaUpload>? = null
+    var raw: JSONObject? = null
 
     constructor()
     constructor (reportData: JSONObject) {
@@ -38,8 +39,7 @@ class Report {
             val status = reportData.getString("status")
             val medias = reportData.getJSONArray("medias")
             val peopleArray = reportData.getJSONArray("people")
-            val _category = reportData.getJSONObject("_category")
-            val category = _category.getString("name")
+            val category = reportData.getJSONObject("category")
             val propertiesArray = reportData.getJSONArray("properties")
             val tagsArray = reportData.getJSONArray("tags")
             var tags = ""
@@ -75,6 +75,7 @@ class Report {
             this.properties = properties
             this.medias = mediaUploads
             this.category = category
+            this.raw = reportData
         }
         catch (e: JSONException) {
             Log.d("REPORT_CLASS_ERROR", e.localizedMessage)
@@ -94,7 +95,7 @@ class Report {
         people: ArrayList<Person>,
         properties: ArrayList<Property>,
         medias: ArrayList<MediaUpload>,
-        category: String) {
+        category: JSONObject) {
 
         this._id = _id
         this.title = title

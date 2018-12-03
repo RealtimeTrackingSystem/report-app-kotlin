@@ -81,7 +81,7 @@ object ReportService {
 
     fun getMyReports (): Observable<Boolean> {
         return Observable.create {
-            val getReportRequest  = object: JsonObjectRequest(Request.Method.GET, "$REPORT_URL?reporter=${App.prefs.reporterId}&resources=medias", null, Response.Listener { response ->
+            val getReportRequest  = object: JsonObjectRequest(Request.Method.GET, "$REPORT_URL?reporter=${App.prefs.reporterId}&resources=medias,properties,people,reporter,host", null, Response.Listener { response ->
                 val httpCode = response.getInt("httpCode")
                 if (httpCode == 200) {
                     loadToast("${response.getJSONArray("reports").length()} Report(s) now Loading....")

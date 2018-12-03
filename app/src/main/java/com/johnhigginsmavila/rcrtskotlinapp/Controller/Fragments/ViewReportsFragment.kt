@@ -1,16 +1,20 @@
 package com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import com.johnhigginsmavila.rcrtskotlinapp.Adapters.ReportListAdapter
+import com.johnhigginsmavila.rcrtskotlinapp.Controller.ReportDetailActivity
 
 import com.johnhigginsmavila.rcrtskotlinapp.R
 import com.johnhigginsmavila.rcrtskotlinapp.Services.ReportService
+import com.johnhigginsmavila.rcrtskotlinapp.Utilities.EXTRA_REPORT_DETAIL_JSON
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_view_reports.*
 
@@ -54,7 +58,11 @@ class ViewReportsFragment : Fragment() {
 
             progressBar.visibility = View.INVISIBLE
             adapter = ReportListAdapter(context!!, ReportService.reports) { report ->
+                Log.d("REPORT_ITEM_CLICK", report.raw.toString())
+                val intent = Intent(context, ReportDetailActivity::class.java)
+                intent.putExtra(EXTRA_REPORT_DETAIL_JSON, report.raw.toString())
 
+                startActivity(intent)
             }
 
             reportListView.adapter = adapter

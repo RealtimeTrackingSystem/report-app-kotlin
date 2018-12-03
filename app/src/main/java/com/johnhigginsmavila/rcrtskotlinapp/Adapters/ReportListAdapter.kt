@@ -35,8 +35,8 @@ class ReportListAdapter (val context: Context, val reports: ArrayList<Report>, v
 
         val id = itemView?.findViewById<TextView>(R.id.reportIdTxt)
         val title = itemView?.findViewById<TextView>(R.id.titleTxt)
-        val status = itemView?.findViewById<TextView>(R.id.statusTxt)
-        val description = itemView?.findViewById<TextView>(R.id.descriptionTxt)
+        val status = itemView?.findViewById<TextView>(R.id.categoryTxt)
+        val description = itemView?.findViewById<TextView>(R.id.titleTxt)
         val preview = itemView?.findViewById<ImageView>(R.id.previewImg)
 
         fun bindCategory (report: Report, context: Context) {

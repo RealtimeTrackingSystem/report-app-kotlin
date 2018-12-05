@@ -52,7 +52,9 @@ object HostService {
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
                     Log.d("AUTH_TOKEN", App.prefs.authToken)
-                    headers.put("Authorization", App.prefs.authToken)
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
                     return headers
                 }
             }
@@ -92,7 +94,9 @@ object HostService {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers.put("Authorization", App.prefs.authToken)
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
                     return headers
                 }
             }
@@ -120,7 +124,9 @@ object HostService {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers.put("Authorization", App.prefs.authToken)
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
                     return headers
                 }
             }

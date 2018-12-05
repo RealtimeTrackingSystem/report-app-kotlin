@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.provider.Settings
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
@@ -17,14 +18,20 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
+import com.google.firebase.messaging.FirebaseMessaging
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.HostFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.ProfileFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.SendReportFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Controller.Fragments.ViewReportsFragment
 import com.johnhigginsmavila.rcrtskotlinapp.Model.User
 import com.johnhigginsmavila.rcrtskotlinapp.R
+import com.johnhigginsmavila.rcrtskotlinapp.Services.AuthService
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_menu.*
 import kotlinx.android.synthetic.main.app_bar_menu.*
 import org.json.JSONException
@@ -45,6 +52,7 @@ class MenuActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
         setSupportActionBar(toolbar)
+        FirebaseMessaging.getInstance().isAutoInitEnabled = true
 //
 //        fab.setOnClickListener { view ->
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -61,10 +69,19 @@ class MenuActivity : AppCompatActivity(),
 
         displaySelectedScreen(R.id.menuSendReport)
 
-        if (App.prefs.authToken == "") {
+        if (App.prefs.authToken == null) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
+        }
+
+        updateFirebaseToken {
+            if (!it) {
+                Toast.makeText(this, "Slow Internet Connection", Toast.LENGTH_SHORT).show()
+//                val intent = Intent(this, LoginActivity::class.java)
+//                startActivity(intent)
+//                finish()
+            }
         }
 
         loadProfile()
@@ -79,6 +96,8 @@ class MenuActivity : AppCompatActivity(),
             startActivity(intent)
             finish()
         }
+
+
     }
 
     override fun onBackPressed() {
@@ -109,6 +128,17 @@ class MenuActivity : AppCompatActivity(),
         // Handle navigation view item clicks here.
         displaySelectedScreen(item.itemId)
         return true
+    }
+
+    fun updateFirebaseToken (cb: (success: Boolean) -> Unit) {
+        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        val token = App.prefs.firebaseToken
+        AuthService.updateFirebaseToken(deviceId, token)
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                cb(it)
+            }
+            .run {}
     }
 
     fun displaySelectedScreen (id: Int) {

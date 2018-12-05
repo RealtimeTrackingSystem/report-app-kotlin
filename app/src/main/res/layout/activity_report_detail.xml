@@ -21,11 +21,11 @@
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/button2">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                      android:orientation="vertical">
+                      android:orientation="vertical" android:visibility="visible">
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp">
+                    android:layout_height="30dp" android:visibility="gone">
                 <TextView
                         android:text="Report ID:"
                         android:layout_width="200dp"
@@ -178,26 +178,26 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/img1" tools:srcCompat="@drawable/app_bg"
-                            android:scaleType="fitCenter" android:layout_margin="10dp" tools:visibility="visible"
-                            android:visibility="gone"/>
+                            android:layout_margin="10dp" tools:visibility="visible"
+                            android:visibility="gone" android:scaleType="fitCenter"/>
                     <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/img2" tools:srcCompat="@drawable/app_bg"
-                            android:scaleType="fitCenter" android:layout_margin="10dp" tools:visibility="visible"
-                            android:visibility="gone"/>
+                            android:layout_margin="10dp" tools:visibility="visible"
+                            android:visibility="gone" android:scaleType="fitCenter"/>
                     <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/img3" tools:srcCompat="@drawable/app_bg"
-                            android:scaleType="fitCenter" android:layout_margin="10dp" tools:visibility="visible"
-                            android:visibility="gone"/>
+                            android:layout_margin="10dp" tools:visibility="visible"
+                            android:visibility="gone" android:scaleType="fitCenter"/>
                     <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/img4" tools:srcCompat="@drawable/app_bg"
-                            android:scaleType="fitCenter" android:layout_margin="10dp" tools:visibility="visible"
-                            android:visibility="gone"/>
+                            android:layout_margin="10dp" tools:visibility="visible"
+                            android:visibility="gone" android:scaleType="fitCenter"/>
                 </LinearLayout>
             </HorizontalScrollView>
 

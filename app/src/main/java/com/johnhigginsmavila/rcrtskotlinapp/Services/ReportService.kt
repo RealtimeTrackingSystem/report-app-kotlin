@@ -31,7 +31,9 @@ object ReportService {
     fun sendReport (report: NewReport): Observable<Boolean> {
         val auth = App.prefs.authToken
         val headers = HashMap<String, String>()
-        headers.put("Authorization", auth)
+        if (App.prefs.authToken != null) {
+            headers.put("Authorization", App.prefs.authToken!!)
+        }
         return Observable.create {
             sending = false
             val reportRequest: MultipartRequest = MultipartRequest(REPORT_URL, headers, { response ->
@@ -100,7 +102,9 @@ object ReportService {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers.put("Authorization", App.prefs.authToken)
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
                     return headers
                 }
             }

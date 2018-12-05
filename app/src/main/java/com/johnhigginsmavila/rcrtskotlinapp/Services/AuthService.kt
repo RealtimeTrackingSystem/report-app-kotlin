@@ -211,7 +211,9 @@ object AuthService {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers.put("Authorization", App.prefs.authToken)
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
                     return headers
                 }
 
@@ -246,7 +248,9 @@ object AuthService {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers.put("Authorization", App.prefs.authToken)
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
                     return headers
                 }
             }
@@ -295,7 +299,9 @@ object AuthService {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers.put("Authorization", App.prefs.authToken)
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
                     return headers
                 }
 
@@ -311,7 +317,9 @@ object AuthService {
         return Observable.create {
             val auth = App.prefs.authToken
             val headers = HashMap<String, String>()
-            headers.put("Authorization", auth)
+            if (App.prefs.authToken != null) {
+                headers.put("Authorization", App.prefs.authToken!!)
+            }
             val changeProfilePic: MultipartRequest = MultipartRequest(UPDATE_PROFILE_PIC_URL, headers, { response ->
                 Log.d("REPONSE", response.toString())
                 it.onNext(true)
@@ -345,6 +353,59 @@ object AuthService {
             changeProfilePic.addPart(MultipartRequest.FilePart("profilepic", "image/jpeg", fileName, byte.toByteArray()))
 
             App.prefs.requestQueue.add(changeProfilePic)
+        }
+    }
+
+    fun updateFirebaseToken (deviceId: String, token: String) : Observable<Boolean> {
+        authResponseError = null
+        val jsonBody = JSONObject()
+        jsonBody.put("deviceId", deviceId)
+        jsonBody.put("token", token)
+        val requestBody = jsonBody.toString()
+        return Observable.create {
+            val updateFBaseToken = object : JsonObjectRequest(Method.POST, UPDATE_FIREBASE_TOKEN_URL, null, Response.Listener { response->
+                it.onNext(true)
+            }, Response.ErrorListener { error ->
+                try {
+                    val err = JSONObject(String(error.networkResponse.data))
+
+                    authResponseError = err.getString("message")
+                    it.onNext(false)
+                } catch (e: JSONException) {
+                    Log.d("FIREBASE_TOKEN_ERROR", e.localizedMessage)
+                    authResponseError = "Internal Server Error"
+                    it.onNext(false)
+                } catch (e: VolleyError) {
+                    Log.d("FIREBASE_TOKEN_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: NullPointerException) {
+                    Log.d("FIREBASE_TOKEN_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                } catch (e: Exception) {
+                    Log.d("FIREBASE_TOKEN_ERROR", e.localizedMessage)
+                    authResponseError = "Slow Internet Connection"
+                    it.onNext(false)
+                }
+            }) {
+                override fun getBodyContentType(): String {
+                    return "application/json; charset=utf-8"
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val headers = HashMap<String, String>()
+                    if (App.prefs.authToken != null) {
+                        headers.put("Authorization", App.prefs.authToken!!)
+                    }
+                    return headers
+                }
+
+                override fun getBody(): ByteArray {
+                    return requestBody.toByteArray()
+                }
+            }
+            App.prefs.requestQueue.add(updateFBaseToken)
         }
     }
 

@@ -4,14 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.google.firebase.messaging.FirebaseMessaging
 import com.johnhigginsmavila.rcrtskotlinapp.R
 import com.johnhigginsmavila.rcrtskotlinapp.Services.AuthService
 import com.johnhigginsmavila.rcrtskotlinapp.Services.HostService
+import com.johnhigginsmavila.rcrtskotlinapp.Services.UserService
 import com.johnhigginsmavila.rcrtskotlinapp.Utilities.SharedPrefs
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -26,15 +29,17 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
 
+        setContentView(R.layout.activity_login)
         val prefs = SharedPrefs(this)
+
 
         progressBar = loginProgresBar
 
-        val token: String = prefs.authToken
-        println(token)
+        val token = prefs.authToken
+        Log.d("TOKEN_VALUE", token)
         if (token != "") {
+            AuthService.refreshUserDataAndLoadHost ()
             val menuIntent = Intent(this, MenuActivity::class.java)
             startActivity(menuIntent)
             finish()
@@ -75,6 +80,20 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                 }
+                .flatMap { result ->
+                    when (result) {
+                        false -> Observable.just(false)
+                        true -> {
+                            try {
+                                val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+                                val token = App.prefs.firebaseToken
+                                AuthService.updateFirebaseToken(deviceId, token)
+                            } catch (e: Exception) {
+                                Observable.just(false)
+                            }
+                        }
+                    }
+                }
                 .subscribe({ result ->
                     Log.d("API", result.toString())
                     hideProgressBar()
@@ -84,11 +103,15 @@ class LoginActivity : AppCompatActivity() {
                             Log.d("USER", App.prefs.userData)
                             // showToast("You are logged in")
                             val intent = Intent(this, MenuActivity::class.java)
+                            FirebaseMessaging.getInstance().isAutoInitEnabled = true
 
                             startActivity(intent)
                             finish()
                         }
-                        else -> showToast(AuthService.authResponseError!!)
+                        else ->  {
+                            UserService.logout()
+                            showToast(AuthService.authResponseError!!)
+                        }
                     }
                 }, { error ->
                     try {

@@ -24,6 +24,8 @@ const val HOST_REQUEST_URL = "${HOST_URL}/requests"
 
 const val REPORT_URL = "${BASE_URL}/api/reports"
 
+const val UPDATE_FIREBASE_TOKEN_URL = "${BASE_URL}/api/reporters/firebase"
+
 // EXTRAS
 
 const val EXTRA_MAP_CALLED_FROM = "EXTRA_MAP_CALLED_FROM"
